@@ -1,0 +1,44 @@
+### model
+model_name_or_path: /srv/user/zhujs/model/Qwen2.5-VL-7B-Instruct
+
+### method
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_target: all
+lora_rank: 16
+lora_alpha: 32
+lora_dropout: 0.05
+
+### dataset
+dataset: highrs_agent_sft
+template: qwen2_vl
+cutoff_len: 16384
+max_samples: 50000
+overwrite_cache: true
+preprocessing_num_workers: 32
+image_max_pixels: 1003520
+
+### output
+output_dir: saves/qwen2.5-vl-7b-instruct/lora/agent_sft_1024_uhr_coz
+logging_steps: 10
+save_steps: 1000
+plot_loss: true
+overwrite_output_dir: true
+
+### train
+per_device_train_batch_size: 2  # 根据你的显存大小调整 (8B 模型如果是 24G/80G 显存可适当拉大)
+gradient_accumulation_steps: 8  # batch_size * acc_steps 最好在 16-32 之间
+learning_rate: 5.0e-5           # LoRA 加上新词表训练，建议比全量微调略高一点
+num_train_epochs: 3.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+bf16: true                      # Qwen 系列强烈建议使用 bfloat16
+flash_attn: fa2                 # 开启 Flash Attention 2 加速
+gradient_checkpointing: true
+
+### logging
+report_to: wandb
+run_name: qwen2_5-vl-sft-highrs
+
+# deepspeed: examples/deepspeed/ds_z2_config.json
