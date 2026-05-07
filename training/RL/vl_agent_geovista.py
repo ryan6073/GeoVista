@@ -5,21 +5,14 @@ import logging
 import os
 from typing import List, Dict, Any
 
-# ==========================================
-# 0. 日志配置 (Logging Configuration)
-# ==========================================
-# 创建一个专门针对当前模块的 logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-# 防止重复添加 handler
 if not logger.handlers:
-    # 设置日志输出文件，你可以修改这个路径，比如 '/workspace/logs/reward_debug.log'
     log_file_path = 'reward_debug.log'
     file_handler = logging.FileHandler(log_file_path, encoding='utf-8')
     file_handler.setLevel(logging.DEBUG)
     
-    # 设置日志格式：时间 - 进程ID - 级别 - 信息
     formatter = logging.Formatter('%(asctime)s - PID:%(process)d - [%(levelname)s] %(message)s')
     file_handler.setFormatter(formatter)
     
@@ -55,7 +48,7 @@ class AgentZoomRewardManager:
         has_ans = "<answer>" in current_content and "</answer>" in current_content
         
         if has_think and (has_tool or has_ans):
-            if has_tool and has_ans: # 同一轮中互斥
+            if has_tool and has_ans:
                 return -self.gamma
             return 1.0
         return -self.gamma
@@ -107,15 +100,12 @@ class AgentZoomRewardManager:
         
         return total_matched_iou / num_gt
 
-# ==========================================
-# 2. verl 适配层接口
-# ==========================================
 def compute_score(solution_str: str, ground_truth: str, extra_info: Any = None, data_source: str = None, **kwargs) -> Dict:
     predict_str = solution_str
     manager = AgentZoomRewardManager()
     
     logger.debug("="*60)
-    logger.debug("--- 开始计算本次 Reward ---")
+    logger.debug("--- Start Computing Reward ---")
     
     # 解析 Parquet 数据
     extra_info = extra_info or {}
@@ -130,15 +120,15 @@ def compute_score(solution_str: str, ground_truth: str, extra_info: Any = None, 
     task_type = rm_data.get('task_type', extra_info.get('ability', 'counting'))
     gt_val = rm_data.get('ground_truth', ground_truth)
 
-    logger.debug(f"1. 数据解析情况：Task Type: {task_type} | GT Val: {gt_val} | GT BBoxes 数量: {len(gt_bboxes)}")
-    logger.debug(f"   GT BBoxes 内容: {gt_bboxes}")
+    logger.debug(f"1. Data Parsing: Task Type: {task_type} | GT Val: {gt_val} | GT BBoxes Count: {len(gt_bboxes)}")
+    logger.debug(f"   GT BBoxes Type: {type(gt_bboxes)}")
 
     # --- 1. Format Score ---
     last_think_pos = predict_str.rfind("<think>")
     current_turn_content = predict_str[last_think_pos:] if last_think_pos != -1 else predict_str
     r_format = manager.get_format_reward(current_turn_content)
     
-    logger.debug(f"2. 格式得分 (r_format): {r_format}")
+    logger.debug(f"2. Format Score (r_format): {r_format}")
 
     # --- 2. IOU Score ---
     all_unique_boxes = {} 
@@ -152,17 +142,16 @@ def compute_score(solution_str: str, ground_truth: str, extra_info: Any = None, 
     unique_pred_bboxes = list(all_unique_boxes.values())
     r_iou = manager.get_iou_reward(unique_pred_bboxes, gt_bboxes)
     
-    logger.debug(f"3. IOU 定位情况：模型预测的 BBoxes 数量: {len(unique_pred_bboxes)}")
-    logger.debug(f"   定位得分 (r_iou): {r_iou}")
+    logger.debug(f"3. IOU positioning status: Number of BBoxes predicted by the model is {len(unique_pred_bboxes)}")
+    logger.debug(f"   IOU score (r_iou): {r_iou}")
 
     # --- 3. Acc Score ---
     ans_match = re.search(r'<answer>(.*?)</answer>', current_turn_content, re.DOTALL)
     final_ans = ans_match.group(1).strip() if ans_match else None
     r_ans = manager.get_answer_reward(task_type, final_ans, gt_val, gt_bboxes)
     
-    logger.debug(f"4. Acc 答案情况：提取的 Answer: {final_ans} | 答案得分 (r_ans): {r_ans}")
+    logger.debug(f"4. Acc Answer Status: Extracted Answer: {final_ans} | Answer Score (r_ans): {r_ans}")
 
-    # --- 4. Process Score (无兜底逻辑) ---
     if task_type == 'counting':
         D = 1.0 - math.exp(-manager.lambda_c * len(gt_bboxes))
     else:
@@ -172,17 +161,17 @@ def compute_score(solution_str: str, ground_truth: str, extra_info: Any = None, 
     has_plan = "[PLAN]" in predict_str or "- [ ]" in predict_str or "[PROGRESS]" in predict_str
     r_plan = D if has_plan else -manager.beta * D
 
-    logger.debug(f"5. Process 过程分情况：难度(D): {D:.4f} | 有Plan: {has_plan} | 过程得分(r_plan): {r_plan:.4f}")
+    logger.debug(f"5. Process classification: Difficulty (D): {D:.4f} | Has a Plan: {has_plan} | Process Score (r_plan): {r_plan:.4f}")
 
     # 一票否决
     if r_format < 0:
-        logger.warning(f"！！！触发一票否决 (r_format < 0)！！！")
+        logger.warning(f"!!! Triggered a veto (r_format < 0)!!!")
         logger.debug("="*60)
         return {"acc": 0.0, "process": 0.0, "format": float(r_format), "iou": 0.0, "score": float(r_format)}
 
     total_score = float(r_ans + r_plan + r_format + r_iou)
     
-    logger.info(f">>> 最终总分 (total_score): {total_score:.4f} [Acc:{r_ans:.2f}, Plan:{r_plan:.2f}, Fmt:{r_format:.2f}, IoU:{r_iou:.2f}]")
+    logger.info(f">>> Final Total Score: {total_score:.4f} [Acc:{r_ans:.2f}, Plan:{r_plan:.2f}, Fmt:{r_format:.2f}, IoU:{r_iou:.2f}]")
     logger.debug("="*60)
 
     return {
