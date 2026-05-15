@@ -1,7 +1,10 @@
 <div align="center">
-  <img src="assets/logo_geovista.png" alt="logo" height="100">
-  <h1 style="font-size: 32px; font-weight: bold;"> GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding </h1>
-
+  <div style="display: flex; align-items: center; gap: 15px;">
+    <img src="assets/logo_geovista.png" alt="logo" height="100">
+    <h1 style="font-size: 32px; font-weight: bold; margin: 0;">
+      GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding
+    </h1>
+  </div>
   <br>
 
   <a href="https://arxiv.org/abs/2605.14475">
