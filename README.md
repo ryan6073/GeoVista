@@ -1,6 +1,6 @@
 <div align="center">
   <img src="assets/logo_geovista.png" alt="logo" height="100">
-  <h1 style="font-size: 32px; font-weight: bold;"> GeoVista: Agentic VLM Framework for Ultra-High Resolution Remote Sensing </h1>
+  <h1 style="font-size: 32px; font-weight: bold;"> GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding </h1>
 
   <br>
 
