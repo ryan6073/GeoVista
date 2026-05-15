@@ -16,7 +16,7 @@
   <!-- <a href="https://huggingface.co/ChenShawn/DeepEyes-7B">
     <img src="https://img.shields.io/badge/🤗 huggingface-Model-purple" alt="checkpoint">
   </a> -->
-  <a href="https://visual-agent.github.io/">
+  <a href="https://ryan6073.github.io/GeoVista/">
     <img src="https://img.shields.io/badge/-HomePage-black?logo=github" alt="homepage">
   </a>
 </div>
