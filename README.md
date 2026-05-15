@@ -1,16 +1,10 @@
 <div align="center">
-  <table border="0" style="border: none;">
-  <tr style="border: none;">
-    <td style="border: none; vertical-align: middle; padding-right: 15px;">
-      <img src="assets/logo_geovista.png" alt="logo" height="100">
-    </td>
-    <td style="border: none; vertical-align: middle;">
-      <h1 style="font-size: 32px; font-weight: bold; margin: 0; border-bottom: none;">
-        GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding
-      </h1>
-    </td>
-  </tr>
-  </table>
+  <h1>
+    <img src="assets/logo_geovista.png" alt="logo" height="100" align="left" style="vertical-align: middle; margin-right: 15px;">
+    GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding
+  </h1>
+  
+  <br clear="all">
   <br>
 
   <a href="https://arxiv.org/abs/2605.14475">
