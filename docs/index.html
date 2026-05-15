@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="GeoVista: A planning-driven active perception framework for UHR remote sensing interpretation.">
+  <meta name="keywords" content="GeoVista, Active Perception, UHR Remote Sensing, MLLM">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding</title>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/logo_geovista.png">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="#">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Jiashun Zhu<sup>1,2</sup>,</span>
+            <span class="author-block">Ronghao Fu<sup>1,2*</sup>,</span>
+            <span class="author-block">Jiasen Hu<sup>1,2</sup>,</span>
+            <span class="author-block">Nachuan Xing<sup>1,2</sup>,</span>
+            <span class="author-block">Xu Na<sup>1,2</sup>,</span>
+            <span class="author-block">Xiao Yang<sup>1,2</sup>,</span>
+            <span class="author-block">Zhiwen Lin<sup>1,2</sup>,</span>
+            <span class="author-block">Weipeng Zhang<sup>1,2</sup>,</span>
+            <span class="author-block">Lang Sun<sup>1,2</sup>,</span>
+            <span class="author-block">Zhiheng Xue<sup>1,2</sup>,</span>
+            <span class="author-block">Haoran Liu<sup>1,2</sup>,</span>
+            <span class="author-block">Weijie Zhang<sup>1,2</sup>,</span>
+            <span class="author-block">Bo Yang<sup>1,2*</sup></span>
+          </div>
+
+          <div class="is-size-5 publication-authors" style="margin-top: 25px;">
+            <span class="author-block"><sup>1</sup>College of Computer Science and Technology, Jilin University, China</span><br>
+            <span class="author-block"><sup>2</sup>Key Laboratory of Symbolic Computation and Knowledge Engineering of Ministry of Education</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://github.com/ryan6073/GeoVista/"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code & Dataset</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body has-text-centered">
+      <img src="./static/images/comparison_of_methods.jpg" alt="Comparison of active perception paradigms" style="max-width: 100%; height: auto;"/>
+      <h2 class="subtitle has-text-centered" style="margin-top: 15px;">
+        <strong>GeoVista</strong> replaces single-trajectory bias with planning-driven multi-branch exploration.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Interpreting ultra-high-resolution (UHR) remote sensing images requires models to search for sparse and tiny visual evidence across large-scale scenes. Existing remote sensing vision-language models can inspect local regions with zooming and cropping tools, but most exploration strategies follow either a one-shot focus or a single sequential trajectory. Such single-path exploration can lose global context, leave scattered regions unvisited, and revisit or count the same evidence multiple times. 
+          </p>
+          <p>
+            To this end, we propose <strong>GeoVista</strong>, a planning-driven active perception framework for UHR remote sensing interpretation. Instead of committing to one zooming path, GeoVista first builds a global exploration plan, then verifies multiple candidate regions through branch-wise local inspection, while maintaining an explicit evidence state for cross-region aggregation and de-duplication. 
+          </p>
+          <p>
+            To enable this behavior, we introduce <strong>APEX-GRO</strong>, a cold-start supervised trajectory corpus that reformulates diverse UHR tasks as Global-Region-Object interactive reasoning processes with a unified, scale-invariant spatial representation. We further design an <strong>Observe-Plan-Track</strong> mechanism for global observation, adaptive region inspection, and evidence tracking, and align the model with a GRPO-based strategy using step-wise rewards for planning, localization, and final answer correctness. Experiments on RSHR-Bench, XLRS-Bench, and LRS-VQA show that GeoVista achieves state-of-the-art performance.
+          </p>
+        </div>
+      </div>
+    </div>
+    </div>
+</section>
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+          <div class="column is-full-width">
+            <h2 class="title is-3">GRPO-Based Agentic Alignment</h2>
+            <div class="content has-text-justified">
+              <p>
+                After supervised fine-tuning, the model's exploration strategy is optimized using Group Relative Policy Optimization (GRPO). We apply multi-dimensional constraints including an accuracy reward, an IoU reward, and a state-aware dynamic plan reward. 
+              </p>
+              <p>
+                Crucially, the perception framework is highly penalized for spatial hallucinations. The mathematical logic of our ground-truth center distance reward dictates that a <strong>smaller distance must dynamically yield a higher accuracy reward</strong>, explicitly forcing the model to hone in on sub-pixel level object centers during multi-hop verification.
+              </p>
+            </div>
+          </div>
+      </div>
+  </div>
+</section> 
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="columns is-centered">
+      <div class="content">
+        <h2 class="title is-3">APEX-GRO Training Set</h2>
+        <p>
+          To provide a cold start for cross-scale tool-interleaved reasoning, we constructed <strong>APEX-GRO</strong>. It is designed specifically as a training set to induce active perception capabilities, rather than a benchmark dataset. It encapsulates UHR tasks into a Global-Region-Object interactive reasoning process to teach the model how to effectively search and verify sparse evidence.
+        </p>
+      </div>
+    </div>
+    
+    </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+      <h2 class="title is-3">Scale-Invariant Spatial Syntax</h2>
+      <div class="columns is-centered">
+        <div class="column content">
+          <p>
+            A central challenge in UHR reasoning is that objects vary drastically in pixel scale across crop levels. To resolve this, GeoVista employs a discrete relative coordinate system mapped rigidly from <strong>0 to 1000</strong>, entirely bypassing the use of absolute physical pixels. This ensures robust spatial references regardless of the local crop resolution.
+          </p>
+        </div>
+    </div>
+    
+    </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@misc{zhu2026geovistavisuallygroundedactive,
+      title={GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding}, 
+      author={Jiashun Zhu and Ronghao Fu and Jiasen Hu and Nachuan Xing and Xu Na and Xiao Yang and Zhiwen Lin and Weipeng Zhang and Lang Sun and Zhiheng Xue and Haoran Liu and Weijie Zhang and Bo Yang},
+      year={2026},
+      eprint={2605.14475},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2605.14475}, 
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website template is borrowed from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>, licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
