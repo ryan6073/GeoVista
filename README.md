@@ -7,7 +7,7 @@
   <a href="https://arxiv.org/abs/2605.14475">
     <img src="https://img.shields.io/badge/ArXiv-GeoVista-brown?logo=arxiv" alt="Paper">
   </a>
-  <!-- <a href="https://huggingface.co/datasets/ChenShawn/DeepEyes-Datasets-47k">
+  <!-- <a href="https://huggingface.co/datasets/ryan6073/APEX-GRO">
     <img src="https://img.shields.io/badge/🤗 huggingface-Dataset-blue" alt="dataset">
   </a>
   <a href="https://huggingface.co/ChenShawn/DeepEyes-7B">

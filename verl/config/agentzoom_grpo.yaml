@@ -1,0 +1,86 @@
+# my_run.yaml
+defaults:
+  - ppo_trainer
+  - _self_
+reward_model:
+  reward_manager: naive_api
+
+debug: false
+vs_debug: false
+
+data:
+  train_files:
+    - /srv/user/zhujs/data/datasets/AgentZoom/AgentZoom_train_merged.parquet
+  val_files:
+    - /srv/user/zhujs/data/datasets/AgentZoom/AgentZoom_train_merged.parquet
+  train_batch_size: 128
+  max_prompt_length: 4096
+  max_response_length: 16384
+  return_raw_chat: true
+  filter_overlong_prompts: false
+
+algorithm:
+  adv_estimator: grpo
+  kl_ctrl:
+    kl_coef: 0.001
+
+actor_rollout_ref:
+  model:
+    enable_gradient_checkpointing: true
+    path: /srv/user/zhujs/work/ultrars/training/LlamaFactory/models/qwen2_5_vl
+    use_remove_padding: true
+
+  actor:
+    optim:
+      lr: 5e-7
+    ppo_mini_batch_size: 128
+    ppo_micro_batch_size_per_gpu: 1
+    use_kl_loss: false
+    kl_loss_coef: 0.01
+    kl_loss_type: low_var_kl
+    entropy_coeff: 0.001
+    checkpoint:
+      contents: [model, hf_model, optimizer, extra]
+    ulysses_sequence_parallel_size: 1
+    fsdp_config:
+      param_offload: true
+      optimizer_offload: true
+
+  rollout:
+    log_prob_micro_batch_size_per_gpu: 16
+    tensor_model_parallel_size: 1
+    name: vllm
+    n: 16
+    max_num_batched_tokens: 20834
+    gpu_memory_utilization: 0.6
+    enforce_eager: false
+    free_cache_engine: false
+    enable_chunked_prefill: false
+
+    agent:
+      activate_agent: true
+      tool_name_key: env_name
+      single_response_max_tokens: 18198
+      max_turns: 5
+      concurrent_workers: 8
+      show_tqdm: true
+
+  ref:
+    log_prob_micro_batch_size_per_gpu: 16
+    fsdp_config:
+      param_offload: true
+
+trainer:
+  critic_warmup: 4
+  logger: [console, tensorboard]
+  val_before_train: false
+  n_gpus_per_node: 8
+  nnodes: 4
+  save_freq: 40
+  test_freq: 10000
+  project_name: geoeyes
+  experiment_name: geoeyes_uhr_coz
+  default_local_dir: /srv/user/zhujs/work/ultrars/training/DeepEyes/verl/verl_ckpts/agent_zoom
+  tensorboard_dir: /srv/user/zhujs/work/ultrars/training/DeepEyes/verl/verl_ckpts/logs/tensorboard
+  rl_logging_board_dir: /srv/user/zhujs/work/ultrars/training/DeepEyes/verl/verl_ckpts/logs/rl_logging_board
+  total_epochs: 8
