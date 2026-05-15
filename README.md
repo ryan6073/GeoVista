@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/logo-geovista.png" alt="logo" height="100">
+  <img src="assets/logo_geovista.png" alt="logo" height="100">
   <h1 style="font-size: 32px; font-weight: bold;"> GeoVista: Agentic VLM Framework for Ultra-High Resolution Remote Sensing </h1>
 
   <br>
@@ -20,16 +20,18 @@
 
 ---
 
+![OverView](assets/comparison_of_methods.jpg)
+
 ## Contents:
 
-1. [Getting Started]()
-2. [Demo]()
-3. [Benchmark]()
-4. [Evaluation]()
-5. [Training]()
-6. [License]()
-7. [Citation]()
-8. [Acknowledgement]()
+1. [Getting Started](#getting-started)
+2. [Demo](#demo)
+3. [Benchmark](#benchmark)
+4. [Evaluation](#evaluation)
+5. [Training](#training)
+6. [License](#license)
+7. [Citation](#citation)
+8. [Acknowledgement](#acknowledgement)
 
 ## Getting Started 
 
@@ -141,11 +143,14 @@ python -m verl.trainer.main_ppo --config-path training/RL/geovista_grpo.yaml
 如果您觉得本项目对您的研究有所帮助，请考虑引用：
 
 ```bibtex
-@article{geovista2024,
-  title={GeoVista: Agentic VLM Framework for Ultra-High Resolution Remote Sensing},
-  author={Your Name and Collaborators},
-  journal={arXiv preprint arXiv:2505.14362},
-  year={2025}
+@misc{zhu2026geovistavisuallygroundedactive,
+      title={GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding}, 
+      author={Jiashun Zhu and Ronghao Fu and Jiasen Hu and Nachuan Xing and Xu Na and Xiao Yang and Zhiwen Lin and Weipeng Zhang and Lang Sun and Zhiheng Xue and Haoran Liu and Weijie Zhang and Bo Yang},
+      year={2026},
+      eprint={2605.14475},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2605.14475}, 
 }
 
 ```
@@ -154,3 +159,4 @@ python -m verl.trainer.main_ppo --config-path training/RL/geovista_grpo.yaml
 
 * 本项目基于 [vLLM](), [verl]() 以及 [LLaMA-Factory]() 构建。
 * 感谢 [Qwen]() 团队提供的强大视觉语言基础模型。
+
