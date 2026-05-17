@@ -9,15 +9,12 @@
   <a href="https://arxiv.org/abs/2605.14475">
     <img src="https://img.shields.io/badge/ArXiv-GeoVista-brown?logo=arxiv" alt="Paper">
   </a>
-  <a href="https://huggingface.co/datasets/ryan6073/APEX-GRO">
+  <a href="https://huggingface.co/collections/ryan6073/apex-gro">
     <img src="https://img.shields.io/badge/🤗 huggingface-Dataset-blue" alt="dataset">
   </a>
-  <a href="https://www.modelscope.ai/datasets/Ryan_Zhu/APEX-GRO">
-    <img src="https://img.shields.io/badge/ModelScope-Dataset-purple" alt="dataset">
-  </a>
-  <!-- <a href="https://huggingface.co/ChenShawn/DeepEyes-7B">
+  <a href="https://huggingface.co/collections/ryan6073/geovista">
     <img src="https://img.shields.io/badge/🤗 huggingface-Model-purple" alt="checkpoint">
-  </a> -->
+  </a>
   <a href="https://ryan6073.github.io/GeoVista/">
     <img src="https://img.shields.io/badge/-HomePage-black?logo=github" alt="homepage">
   </a>
