@@ -131,16 +131,16 @@ print(f"Final Answer: {final_answer}")
 在运行评估前，请确保您已在项目根目录创建并配置了 `.env` 文件（参考 `.env.example`，配置您的 `API_BASE` 与数据集路径 `BENCHMARK_ROOT`）。
 
 ```bash
-# 1. 全自动流：完整运行推理与评估 (同时评测 XLRS, XHR, LRS 三个数据集)
+# 1. 完整运行推理与评估 (同时评测 XLRS, XHR, LRS 三个数据集)
 python eval/main.py --data xlrs xhr lrs --model geovista-7b-preview --mode all --api-nproc 5
 
-# 2. 异步流：仅进行并发推理 (适合 H200 集群夜间长时间挂机跑数据)
+# 2. 仅进行并发推理
 python eval/main.py --data xhr --model geovista-7b-preview --mode infer --api-nproc 10
 
-# 3. 分析流：仅生成结构化评测报告 (从已有的 jsonl 结果文件中计算细粒度 Acc 与 MTEM@1 指标)
+# 3. 仅生成结构化评测报告
 python eval/main.py --data xlrs xhr lrs --model geovista-7b-preview --mode eval
 
-# 4. 消融实验：自动对比多组模型权重
+# 4. 自动对比多组模型权重
 python eval/main.py --data xlrs --model agent_step_1000 agent_step_2000 --mode all
 
 ```
@@ -176,7 +176,7 @@ python -m verl.trainer.main_ppo --config-path training/RL/geovista_grpo.yaml
 ```bibtex
 @misc{zhu2026geovistavisuallygroundedactive,
       title={GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding}, 
-      author={Jiashun Zhu and Ronghao Fu and Jiasen Hu and Nachuan Xing and Xu Na and Xiao Yang and Zhiwen Lin and Weipeng Zhang and Lang Sun and Zhiheng Xue and Haoran Liu and Weijie Zhang and Bo Yang},
+      author={Jiashun Zhu and Ronghao Fu and Jiasen Hu and Nachuan Xing and others},
       year={2026},
       eprint={2605.14475},
       archivePrefix={arXiv},
