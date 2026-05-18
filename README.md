@@ -149,3 +149,8 @@ python -m verl.trainer.main_ppo --config-path training/RL/geovista_grpo.yaml
 * 本项目基于 [vLLM](https://github.com/vllm-project/vllm), [verl](https://github.com/verl-project/verl) 以及 [LLaMA-Factory](https://github.com/hiyouga/LlamaFactory) 构建。
 * 感谢 [Qwen](https://github.com/QwenLM/Qwen) 团队提供的强大视觉语言基础模型。
 
+<p align="center">
+  <a href="https://star-history.com/#ryan6073/GeoVista&Date">
+    <img src="https://api.star-history.com/svg?repos=ryan6073/GeoVista&type=Date" alt="GitHub Star History Chart" width="100%" />
+  </a>
+</p>
