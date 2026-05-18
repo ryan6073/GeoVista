@@ -176,7 +176,7 @@ python -m verl.trainer.main_ppo --config-path training/RL/geovista_grpo.yaml
 ```bibtex
 @misc{zhu2026geovistavisuallygroundedactive,
       title={GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding}, 
-      author={Jiashun Zhu and Ronghao Fu and Jiasen Hu and Nachuan Xing and others},
+      author={Jiashun Zhu, Ronghao Fu, Jiasen Hu, Nachuan Xing and others},
       year={2026},
       eprint={2605.14475},
       archivePrefix={arXiv},
