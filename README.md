@@ -45,7 +45,6 @@ conda activate geovista
 # 安装核心依赖 (基于 vLLM, verl 与 LLaMA-Factory)
 pip install -r requirements.txt
 pip install flash-attn --no-build-isolation
-export PYTHONPATH=$PYTHONPATH:path_to_geovista_repo
 
 ```
 
@@ -53,24 +52,12 @@ export PYTHONPATH=$PYTHONPATH:path_to_geovista_repo
 
 项目支持加载经过 SFT 或 RL 对齐的模型权重：
 
-* **GeoVista-SFT (Qwen2.5-VL-7B)**: [HuggingFace 链接]
-* **GeoVista-RL-GRPO (Qwen2.5-VL-7B)**: [HuggingFace 链接]
+* **GeoVista-7B-Instruct**: [https://huggingface.co/ryan6073/GeoVista-7B-Instruct]
+* **GeoVista-7B-Preview**: [https://huggingface.co/ryan6073/GeoVista-7B-Preview]
 
 ### Training Dataset
 
-GeoVista 依赖于专门构建的遥感指令微调数据集：
-
-* **APEX-GRO**: 用于监督微调（SFT）和智能体能力初始化。
-* **HighRS / LRS_GRO**: 包含多尺度遥感目标与级联推理标注。
-
-```text
-├── data
-│   ├── APEX-GRO
-│   │   └── images
-│   ├── HighRS
-│   └── LRS_GRO
-
-```
+...
 
 ## Demo 
 
@@ -80,7 +67,7 @@ GeoVista 依赖于专门构建的遥感指令微调数据集：
 from geovista.agent_framework import GeoVistaAgent, zoom_in_tool
 
 # 初始化 Agent
-agent = GeoVistaAgent(model_name="qwen2.5-vl-7b", api_base="http://localhost:8011/v1")
+agent = GeoVistaAgent(model_name="geovista-7b-preview", api_base="http://localhost:8011/v1")
 # 注册物理级裁剪工具
 agent.register_tool("zoom_in", zoom_in_tool)
 
@@ -159,6 +146,6 @@ python -m verl.trainer.main_ppo --config-path training/RL/geovista_grpo.yaml
 
 ## Acknowledgement 
 
-* 本项目基于 [vLLM](), [verl]() 以及 [LLaMA-Factory]() 构建。
-* 感谢 [Qwen]() 团队提供的强大视觉语言基础模型。
+* 本项目基于 [vLLM](https://github.com/vllm-project/vllm), [verl](https://github.com/verl-project/verl) 以及 [LLaMA-Factory](https://github.com/hiyouga/LlamaFactory) 构建。
+* 感谢 [Qwen](https://github.com/QwenLM/Qwen) 团队提供的强大视觉语言基础模型。
 
