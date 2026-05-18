@@ -39,12 +39,30 @@
 
 ### Installation
 
+我们提供两种环境配置方式。您可以选择传统的 Conda 方式，或者使用极速的 `uv` 工具栈进行部署。
+
+**方式一：纯 Conda 部署 (传统且稳定)**
 ```bash
 conda create -n geovista python=3.10 -y
 conda activate geovista
+
 # 安装核心依赖 (基于 vLLM, verl 与 LLaMA-Factory)
 pip install -r requirements.txt
+# 单独安装 flash-attn 以加速注意力计算
 pip install flash-attn --no-build-isolation
+
+```
+
+**方式二：纯 uv 部署 (极速构建，强烈推荐)**
+
+```bash
+# 如果尚未安装 uv，请先执行: pip install uv
+uv venv --python 3.10
+source .venv/bin/activate  # Windows 用户请使用 .venv\Scripts\activate
+
+# 使用 uv pip 进行极速依赖解析和安装
+uv pip install -r requirements.txt
+uv pip install flash-attn --no-build-isolation
 
 ```
 
@@ -59,47 +77,71 @@ pip install flash-attn --no-build-isolation
 
 ...
 
-## Demo 
+## Demo
 
-您可以使用内置的 `GeoVistaAgent` 启动推理任务。框架会自动注册物理执行工具并处理多轮对话逻辑。
+您可以使用内置的 `GeoVistaAgent` 启动单张图像的交互式主动感知任务。框架会自动注册物理执行工具，并处理模型在全局与局部视图间的多轮推理与容错逻辑。
 
 ```python
-from geovista.agent_framework import GeoVistaAgent, zoom_in_tool
+from geovista.agent import GeoVistaAgent, zoom_in_tool
 
-# 初始化 Agent
-agent = GeoVistaAgent(model_name="geovista-7b-preview", api_base="http://localhost:8011/v1")
-# 注册物理级裁剪工具
-agent.register_tool("zoom_in", zoom_in_tool)
-
-# 启动任务
-agent.run(
-    user_prompt="图中共有多少架小型民航客机？请通过局部放大确认。",
-    image_path="path/to/uhr_image.tif"
+# 1. 初始化 Agent (支持 vLLM 本地服务或 OpenAI 兼容中转站 API)
+agent = GeoVistaAgent(
+    model_name="geovista-7b-preview", 
+    api_base="http://localhost:8100/v1"
 )
 
+# 2. 注册高分辨率裁剪工具
+agent.register_tool("zoom_in", zoom_in_tool)
+
+# 3. 定义标准操作程序 (SOP)
+SYSTEM_PROMPT = """Task: Precise Object Counting.
+Algorithm SOP (STRICT CHECKLIST PROCESS):
+1. PLAN PHASE: In your first <think> block, write an explicit [PLAN] containing the regions to inspect.
+2. EXECUTION RULE: If the target region is unclear, request a crop via:
+   <tool_call>{"name": "zoom_in", "arguments": {"bbox": [x1, y1, x2, y2]}}</tool_call>
+   STOP GENERATING AFTER THE TOOL CALL.
+"""
+
+# 4. 启动主动感知推理
+final_answer = agent.run(
+    user_prompt="图中共有多少架小型民航客机？请通过局部放大确认。",
+    image_path="path/to/uhr_image.tif",
+    system_prompt=SYSTEM_PROMPT
+)
+print(f"Final Answer: {final_answer}")
+
 ```
 
-## Benchmark 
+## Benchmark
 
-我们的评估基准包含在 `data/benchmark` 目录下，主要涵盖了高分辨率场景下的目标检测、计数与属性识别。格式如下：
+我们提供了一个多维度的评估基准工具箱，支持对模型在高分辨率场景下的视觉推理、主动感知与工具调用能力进行自动化打分。目前完整支持以下三大基准测试：
 
-```javascript
-{
-  "target_type": "remote-sensing-object",
-  "coordinates": [x_min, y_min, x_max, y_max], // 基于 0-1000 相对坐标系
-  "question": "What is the specific type of this aircraft?",
-  "ground_truth": "Boeing 737-800"
-}
+* **XLRSBench**: 复杂的视觉推理与综合判读 (包含 16 项细分感知与推理能力)。
+* **XHRBench**: 高分辨率遥感异常检测与细粒度感知 (支持 **MTEM@1** 多轮主动感知评测)。
+* **LRS-VQA**: 基础视觉问答与空间关系推理。
 
-```
+> **⚠️ 坐标系规范 (Coordinate System Spec):** > 在工具调用环节，模型输出的裁剪包围盒（BBox）必须严格遵循 `[x1, y1, x2, y2]` 格式，且统一使用相对原始图像尺寸的 **0-1000 离散相对坐标系**（左上角为 `[0, 0]`，右下角为 `[1000, 1000]`）。框架底层的 Agent 会自动将其映射并裁剪为真实的物理像素。
 
-## Evaluation 
+---
 
-运行以下脚本评估模型在遥感任务中的推理性能与工具调用准确率：
+## Evaluation
+
+基于我们提供的模块化评测套件，您可以通过统一的命令行接口 (CLI) 轻松发起多并发的推理和自动化打分。
+
+在运行评估前，请确保您已在项目根目录创建并配置了 `.env` 文件（参考 `.env.example`，配置您的 `API_BASE` 与数据集路径 `BENCHMARK_ROOT`）。
 
 ```bash
-# 评估 Agent 调度能力与目标检测精度
-python evaluate_agent.py --config training/RL/geovista_grpo.yaml --task count_task
+# 1. 全自动流：完整运行推理与评估 (同时评测 XLRS, XHR, LRS 三个数据集)
+python eval/main.py --data xlrs xhr lrs --model geovista-7b-preview --mode all --api-nproc 5
+
+# 2. 异步流：仅进行并发推理 (适合 H200 集群夜间长时间挂机跑数据)
+python eval/main.py --data xhr --model geovista-7b-preview --mode infer --api-nproc 10
+
+# 3. 分析流：仅生成结构化评测报告 (从已有的 jsonl 结果文件中计算细粒度 Acc 与 MTEM@1 指标)
+python eval/main.py --data xlrs xhr lrs --model geovista-7b-preview --mode eval
+
+# 4. 消融实验：自动对比多组模型权重
+python eval/main.py --data xlrs --model agent_step_1000 agent_step_2000 --mode all
 
 ```
 
