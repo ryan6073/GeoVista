@@ -36,6 +36,17 @@
   <script defer src="./static/js/fontawesome.all.min.js"></script>
   <script src="./static/js/index.js?v=2"></script>
 
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
   <style>
     /* 独立的大标题区块样式 (用于 Methodology, Experimental Results, Citation) */
     .section-header {
@@ -89,6 +100,20 @@
     .is-centered-title {
       text-align: center !important;
       margin-bottom: 25px !important;
+    }
+
+    .equation-block {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0 1.25rem 0;
+      overflow-x: auto;
+      text-align: center;
+      border: 1px solid #eaeaea;
+    }
+
+    .reward-item {
+      margin-bottom: 1.25rem;
     }
   </style>
 </head>
@@ -239,10 +264,24 @@
         <img src="./static/images/data_construction.png" alt="Figure 3: APEX-GRO Data Construction Pipeline" class="floating-img">
         <div class="caption-text">
           <p>
-            To provide a cold start for this behavior, we construct <strong>APEX-GRO</strong> (Active Planning and Execution across Global-Region-Object levels), a <strong>supervised trajectory corpus</strong> for tool-interleaved UHR reasoning. Each trajectory in APEX-GRO is represented as a <strong>sequence of reasoning states, tool actions, visual observations, and evidence updates</strong>. APEX-GRO is synthesized through a <strong>four-stage pipeline</strong>: <strong>First</strong>, we collect diverse RS data sources, including DOTA-v1.5 and FAIR1M for visual grounding, AID , UC-Merced , NWPU-RESISC45, and WHU-RS19 for scene classification, GeoLLaVA-8K for high-resolution spatial reasoning, and EarthVQA for urban/rural categorization. <strong>Second</strong>, a context engine converts available annotations into a nested task checklist that specifies targets and sub-goals to be resolved. The checklist only guides task decomposition; exact oracle coordinates and final answers are hidden from the teacher model, reserved for automatic validation and human verification. <strong>Third</strong>, a teacher VLM (gemini-3.1-flash-lite-preview) generates tool-interleaved trajectories by alternating among reasoning, planning, crop-based inspection, and evidence tracking. <strong>Finally</strong>, we apply quality control to remove trajectories with coordinate leakage, invalid tool syntax, malformed spatial references, or inconsistent final answers, and drop evaluation benchmark overlaps.
+            To provide a cold start for tool-interleaved UHR reasoning, we construct <strong>APEX-GRO</strong> (<strong>A</strong>ctive <strong>P</strong>lanning and <strong>EX</strong>ecution across <strong>G</strong>lobal-<strong>R</strong>egion-<strong>O</strong>bject levels), a supervised trajectory corpus. Each trajectory is serialized as
+            $\tau = (z_0, a_0, o_1, z_1, a_1, o_2, \dots, z_T, A)$,
+            where $z_t$ is the textual reasoning state, $a_t$ is a visual action, $o_t$ is the returned observation, and $A$ is the final answer. We define each visual action as $a_t=\texttt{crop}(b_t, \ell_t)$, where $b_t$ is the selected ROI and $\ell_t \in \{L_0,L_1,L_2\}$ denotes the global, region, or object level.
           </p>
           <p>
-            APEX-GRO organizes UHR perception into a <strong>three-level hierarchy</strong>. At the <strong>Global level</strong> (L<sub>0</sub>), the model observes a downsampled global view and produces a macroscopic exploration plan. At the <strong>Region level</strong> (L<sub>1</sub>), it inspects candidate ROIs to verify structural patterns and narrow down task-relevant areas. At the <strong>Object level</strong> (L<sub>2</sub>), it performs fine-grained inspection for small targets, object attributes, and precise localization. Furthermore, because absolute pixel coordinates do not generalize well across image sizes, while unrestricted continuous coordinates are difficult to serialize reliably in language-model outputs, we therefore adopt a <strong>discrete relative coordinate system</strong>. This representation provides a nominal relative resolution of 0.1% within each ROI and <strong>decouples spatial outputs from the absolute image resolution</strong>.
+            APEX-GRO is synthesized through a <strong>four-stage pipeline</strong>. <strong>First</strong>, we collect diverse RS data sources, including DOTA-v1.5 and FAIR1M for visual grounding, AID, UC-Merced, NWPU-RESISC45, and WHU-RS19 for scene classification, GeoLLaVA-8K for high-resolution spatial reasoning, and EarthVQA for urban/rural categorization. <strong>Second</strong>, a context engine converts available annotations into a nested task checklist. The checklist only guides task decomposition; exact oracle coordinates and final answers are hidden from the teacher model, reserved for automatic validation and human verification. <strong>Third</strong>, a teacher VLM (<code>gemini-3.1-flash-lite-preview</code>) generates tool-interleaved trajectories by alternating among reasoning, planning, crop-based inspection, and evidence tracking. <strong>Finally</strong>, we apply quality control to remove trajectories with coordinate leakage, invalid tool syntax, malformed spatial references, or inconsistent final answers, and drop evaluation-benchmark overlaps.
+          </p>
+          <p>
+            APEX-GRO organizes UHR perception into a three-level hierarchy. At the <strong>Global</strong> level ($L_0$), the model observes a downsampled global view $V^0_{\text{global}}$ and produces a macroscopic exploration plan. At the <strong>Region</strong> level ($L_1$), it inspects candidate ROIs $V^1_{\text{crop}}$ to verify structural patterns. At the <strong>Object</strong> level ($L_2$), it performs fine-grained inspection $V^2_{\text{crop}}$ for small targets and precise localization.
+          </p>
+          <p>
+            For a crop ROI $b_i=(x_{\min},y_{\min},w,h)$, we adopt a discrete relative coordinate system:
+          </p>
+          <div class="equation-block">
+            $$\mathcal{T}(x,y \mid b_i)=\left(\mathrm{round}\!\left(\frac{x-x_{\min}}{w}\cdot 1000\right),\;\mathrm{round}\!\left(\frac{y-y_{\min}}{h}\cdot 1000\right)\right).$$
+          </div>
+          <p>
+            For a bounding box $B=(x_1,y_1,x_2,y_2)$, the transform is applied to both corner points. This representation provides a nominal relative resolution of $0.1\%$ within each ROI and decouples spatial outputs from the absolute image resolution.
           </p>
         </div>
       </div>
@@ -253,19 +292,19 @@
         <h3 class="caption-title">GeoVista: Observe-Plan-Track Active Perception Framework</h3>
         <div class="caption-text">
           <p>
-            GeoVista follows the same action space and spatial syntax as APEX-GRO during inference. Given an UHR image and a query, it <strong>avoids greedily committing to a single zooming path</strong>. Instead, it first constructs a global plan over multiple ROIs, and then verifies these ROIs with local observations while maintaining a structured evidence state. Because all branches correspond to different planned ROIs but share a global plan, we refer to this process as <strong>multi-branch exploration</strong>. The framework operates through four key steps:
+            GeoVista follows the same action space and spatial syntax as APEX-GRO during inference. Given a UHR image $I$ and a query $Q$, it avoids greedily committing to a single zooming path. Instead, it first constructs a global plan over multiple ROIs and verifies them with local observations while maintaining a structured evidence state $E$. Although branches are decoded sequentially in one autoregressive trace, they are conditioned on a shared global plan and correspond to different planned ROIs; we refer to this process as <em>multi-branch exploration</em>.
           </p>
           <p>
-            <strong>1. Observe (Global Scene Observation):</strong> GeoVista first obtains a downsampled global view V<sup>0</sup><sub>global</sub> of the UHR image. This view provides broad spatial coverage and supports reasoning about scene layout, potential target distribution, and task-relevant search regions. It does not resolve all fine-grained details but provides the necessary context for exploration planning.
+            <strong>Observe (Global Scene Observation).</strong> GeoVista first obtains a downsampled global view $V^0_{\text{global}}$ of the UHR image. This view provides broad spatial coverage for scene layout, target distribution, and task-relevant search regions, but is not expected to resolve all fine-grained details.
           </p>
           <p>
-            <strong>2. Plan (Multi-ROI Exploration Planning):</strong> Conditioned on Q and V<sup>0</sup><sub>global</sub>, the policy <strong>generates a structured plan</strong>. Each item in the plan records an ROI, a verification goal, and its current status. The plan specifies exactly which regions should be inspected and what evidence should be verified, enabling <strong>targeted exploration instead of unstructured zooming</strong>.
+            <strong>Plan (Multi-ROI Exploration Planning).</strong> Conditioned on $Q$ and $V^0_{\text{global}}$, the policy $\pi_\theta$ generates a structured plan $P^0=(p_1^0,\dots,p_K^0)$, where each item $p_i^0=(r_i^0,g_i^0,s_i^0)$ records an ROI, a verification goal, and its current status. Here $K$ is constrained by the available tool-call budget.
           </p>
           <p>
-            <strong>3. Track (Branch-wise Verification and Evidence Update):</strong> For each pending ROI, GeoVista extracts a high-resolution crop from the original image and decodes a branch trajectory. The evidence state E is updated after each branch, recording the inspected ROI, global coordinates, verification status, local observations, detected objects, and unresolved sub-goals. Local crop coordinates are <strong>mapped back to the global image frame</strong> before updating, which helps <strong>reduce redundant exploration and duplicated counting</strong>. If a crop remains ambiguous, GeoVista can append a sub-plan and inspect at a finer scale.
+            <strong>Track (Branch-wise Verification and Evidence Update).</strong> For each pending ROI $r_i^d$ at depth $d$, GeoVista extracts a high-resolution crop $v_i^d=\mathrm{Crop}(I,r_i^d)$ and decodes a branch trajectory $\tau_i^d \sim \pi_\theta(\cdot \mid Q,V^0_{\text{global}},P^d,E,r_i^d,v_i^d)$. After each branch, the evidence state is updated as $E \leftarrow \operatorname{Update}(E,\tau_i^d)$. Local crop coordinates are mapped back to the global image frame before being written into $E$, which helps reduce redundant exploration and duplicated counting. If a crop remains ambiguous, GeoVista can append a sub-plan $P_i^{d+1}$ and continue inspection at a finer scale.
           </p>
           <p>
-            <strong>4. Evidence Aggregation:</strong> After branch-wise verification, GeoVista <strong>aggregates the evidence state into a final prediction</strong>. This step maps local findings back to their corresponding nodes in the global plan, forming a <strong>hierarchical evidence tree</strong> with verified observations, rejected hypotheses, and unresolved cases. Ultimately, the final answer is generated from organized spatial evidence rather than an unstructured long reasoning history.
+            <strong>Evidence Aggregation.</strong> After branch-wise verification, GeoVista aggregates the evidence state into a final prediction $A \sim \pi_\theta(\cdot \mid Q,V^0_{\text{global}},P,E)$, forming a hierarchical evidence tree with verified observations, rejected hypotheses, and unresolved cases. The final answer is generated from organized spatial evidence rather than an unstructured long reasoning history.
           </p>
         </div>
       </div>
@@ -277,31 +316,79 @@
     <img src="./static/images/training_pipeline.png" alt="Figure 4: Training Pipeline of GeoVista" class="floating-img">
     <div class="caption-text">
       <p>
-        As illustrated in the figure above, GeoVista is trained in two stages.
-      </p>
-      
-      <p>
-        <strong>Stage I: Supervised Fine-Tuning.</strong> The first stage performs SFT on APEX-GRO to initialize the model with tool syntax, scale-invariant spatial grounding, and cross-scale reasoning patterns. By optimizing the model to imitate interleaved reasoning trajectories, SFT teaches the model to produce parseable outputs encompassing reasoning text, plan items, tool calls, evidence updates, and final answers. This decomposes large-scale visual reasoning into global observation, regional inspection, and object-level verification.
+        As illustrated in the figure above, GeoVista is trained in two stages: supervised fine-tuning on APEX-GRO, followed by GRPO-based alignment on verifiable grounding and counting tasks.
       </p>
 
       <p>
-        <strong>Stage II: GRPO Alignment.</strong> The second stage applies GRPO-based alignment to improve long-horizon active perception on verifiable tasks. To comprehensively evaluate the trajectories, the multi-dimensional reward function combines the following score items:
+        <strong>Stage I: Supervised Fine-Tuning.</strong> Given the trajectory corpus $\mathcal{D}_{\text{SFT}}=\{(I,Q,\tau)\}$, we optimize the model to imitate interleaved reasoning trajectories:
       </p>
-      
-      <ul style="list-style-type: disc; margin-left: 20px; margin-bottom: 15px;">
-        <li>
-          <strong>Format Validity Reward:</strong> Ensures the structural correctness of the generated trajectories and tool syntax.
-        </li>
-        <li>
-          <strong>Accuracy Reward (r<sub>acc</sub>):</strong> Evaluates the correctness of the final task output (e.g., counting or visual grounding).
-        </li>
-        <li>
-          <strong>IoU Reward (r<sub>iou</sub>) / Localization Quality:</strong> Evaluates localization against matched ground-truth targets and penalizes artificially enlarged regions. This encourages the model to precisely localize objects rather than relying on coarse or over-expanded regions.
-        </li>
-        <li>
-          <strong>State-Aware Dynamic Plan Reward (r<sub>plan</sub>):</strong> Encourages the model to plan before acting, follow the plan during exploration, and consistently update the evidence state. Plan execution is evaluated using a lightweight state machine combined with a task-dependent difficulty coefficient. Valid executions are rewarded more strongly on difficult examples, while bypassing verification or committing severe state violations (e.g., skipping unvisited regions) incurs fixed penalties.
-        </li>
-      </ul>
+      <div class="equation-block">
+        $$\mathcal{L}_{\text{SFT}} = - \sum_{(I,Q,\tau) \in \mathcal{D}_{\text{SFT}}} \sum_{t=1}^{|\tau|} \log \pi_\theta(z_t \mid I, Q, z_{\lt t}),$$
+      </div>
+      <p>
+        where $z_t$ denotes the serialized textual token at step $t$, including reasoning text, plan items, tool calls, evidence updates, and final answers. This stage teaches parseable trajectories and decomposes large-scale visual reasoning into global observation, regional inspection, and object-level verification.
+      </p>
+
+      <p>
+        <strong>Stage II: GRPO-Based Agentic Alignment.</strong> For each training instance $x=(I,Q)$, we sample a group of $G$ trajectories $\{o_i\}_{i=1}^{G}$ and optimize the clipped GRPO objective:
+      </p>
+      <div class="equation-block">
+        $$\mathcal{J}_{\text{GRPO}}(\theta)=\mathbb{E}_{x,\{o_i\}_{i=1}^{G}}\!\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\min\!\left(r_{i,t}\hat{A}_i,\operatorname{clip}(r_{i,t},1-\epsilon,1+\epsilon)\hat{A}_i\right)-\beta_{\text{KL}}D_{\text{KL}}(\pi_\theta\,\|\,\pi_{\text{ref}})\right],$$
+      </div>
+      <p>
+        where $r_{i,t}=\pi_\theta(o_{i,t}\mid x,o_{i,\lt t})/\pi_{\theta_{\text{old}}}(o_{i,t}\mid x,o_{i,\lt t})$ and $\pi_{\text{ref}}$ is initialized from the SFT checkpoint.
+      </p>
+
+      <p><strong>Reward Design.</strong> For a trajectory output $o$, the total reward is</p>
+      <div class="equation-block">
+        $$R(o)=
+        \begin{cases}
+        \omega_1 r_{\text{fmt}}+\omega_2 r_{\text{acc}}+\omega_3 r_{\text{iou}}+\omega_4 r_{\text{plan}}, & \text{if } r_{\text{fmt}}=1,\\
+        -\gamma_{\text{fmt}}, & \text{if } r_{\text{fmt}}=0.
+        \end{cases}$$
+      </div>
+      <p>Invalid formats receive a fixed negative reward because malformed outputs cannot be parsed into valid tool actions, spatial references, or evidence states. The four core reward components are defined as follows.</p>
+
+      <div class="reward-item">
+        <p><strong>Format Validity Reward ($r_{\text{fmt}}$).</strong> A binary reward that verifies structural correctness of the generated trajectory and tool syntax.</p>
+      </div>
+
+      <div class="reward-item">
+        <p><strong>Accuracy Reward ($r_{\text{acc}}$).</strong> For counting tasks,</p>
+        <div class="equation-block">
+          $$r_{\text{acc}}^{\text{count}} = 1 - \tanh\!\left(\frac{|\hat{y}-y|}{\max(y,1)}\right),$$
+        </div>
+        <p>where $\hat{y}$ and $y$ are the predicted and ground-truth counts. For grounding tasks,</p>
+        <div class="equation-block">
+          $$r_{\text{acc}}^{\text{ground}} = 1 - \tanh\!\left(\frac{\|c(\hat{B})-c(B)\|_2}{1000}\right),$$
+        </div>
+        <p>where $\hat{B}$ and $B$ are the predicted and ground-truth boxes in the normalized coordinate space, and $c(\cdot)$ returns the box center.</p>
+      </div>
+
+      <div class="reward-item">
+        <p><strong>IoU Reward ($r_{\text{iou}}$).</strong> For single-target grounding,</p>
+        <div class="equation-block">
+          $$r_{\text{iou}}^{\text{ground}}=\operatorname{IoU}(\hat{B},B).$$
+        </div>
+        <p>For counting tasks with predicted candidate boxes $\mathcal{P}$,</p>
+        <div class="equation-block">
+          $$r_{\text{iou}}^{\text{count}} = \frac{1}{|\mathcal{P}|}\sum_{\hat{B}_i\in\mathcal{P}} s(\hat{B}_i),$$
+        </div>
+        <p>where $s(\hat{B}_i)$ is a strict inclusion score that rewards boxes covering matched ground-truth targets and penalizes artificially enlarged regions.</p>
+      </div>
+
+      <div class="reward-item">
+        <p><strong>State-Aware Dynamic Plan Reward ($r_{\text{plan}}$).</strong> We evaluate plan execution with a lightweight state machine where items are pending or completed. We assign a score $Q_{\text{plan}}\in\{1,0,-1\}$ for valid execution, bypassing verification, or severe state violations (e.g., skipping unvisited regions). The task-dependent difficulty coefficient is $\mathcal{D}\in(0,1]$: for counting, $\mathcal{D}=1-\exp(-\lambda_c y)$; for grounding, $\mathcal{D}=\exp(-\lambda_g |B|/10^6)$. The plan reward is</p>
+        <div class="equation-block">
+          $$r_{\text{plan}}=
+          \begin{cases}
+          \alpha \mathcal{D}, & Q_{\text{plan}}=1,\\
+          -\beta \mathcal{D}, & Q_{\text{plan}}=0,\\
+          -\gamma_{\text{plan}}, & Q_{\text{plan}}=-1.
+          \end{cases}$$
+        </div>
+        <p>Thus, structured exploration is rewarded more strongly on difficult examples, while severe state-machine violations still receive a fixed negative reward.</p>
+      </div>
     </div>
     </div>
    </div>
@@ -324,7 +411,7 @@
         <img src="./static/images/4.2.png" alt="Table 1 / Figure 5: Overall Comparison on UHR Benchmarks" class="floating-img">
         <div class="caption-text">
           <p>
-            We evaluate GeoVista on three UHR remote sensing benchmarks: <strong>XLRS-Bench</strong>, <strong>RSHR-Bench</strong>, and <strong>LRS-VQA</strong>. Compared against 19 diverse representative baselines, GeoVista achieves the best overall performance, scoring 43.10 on RSHR-Bench, 52.78 on XLRS-Bench, and 27.71 on LRS-VQA. It significantly outperforms the strongest sequential zoom-in baseline (GeoEyes), demonstrating that increasing visual input capacity alone is insufficient without adaptive multi-region evidence acquisition.
+            We evaluate GeoVista on three UHR remote sensing benchmarks: <strong>XLRS-Bench</strong>, <strong>RSHR-Bench</strong>, and <strong>LRS-VQA</strong> against 19 representative baselines. GeoVista achieves the best overall performance, scoring <strong>43.10</strong> on RSHR-Bench, <strong>52.78</strong> on XLRS-Bench, and <strong>27.71</strong> on LRS-VQA. It outperforms the strongest zoom-in baseline GeoEyes by <strong>10.44</strong> and <strong>3.35</strong> absolute points on XLRS-Bench and RSHR-Bench, respectively, while remaining competitive on LRS-VQA. Compared with large-format models such as InternVL3.5-8B, GeoVista improves XLRS-Bench by <strong>11.19</strong> points, indicating that UHR understanding requires adaptive evidence acquisition rather than only enlarging the visual context.
           </p>
         </div>
       </div>
@@ -336,7 +423,7 @@
         <img src="./static/images/4.3.png" alt="Table 2: Fine-Grained Results on XLRS-Bench" class="floating-img">
         <div class="caption-text">
           <p>
-            GeoVista consistently achieves the best results across all perception sub-categories, including Counting (43.62), Scene Classification (53.08), Object Spatial Relationship (42.25), and Object Properties (57.58). Furthermore, GeoVista exhibits a distinct inference pattern: it utilizes more tool calls per question (3.82 Tools/Q) reflecting its broader multi-ROI exploration, while maintaining a lower token consumption per reasoning turn compared to existing long single-chain zoom-in methods.
+            GeoVista consistently achieves the best results across all perception sub-categories, including Counting (<strong>43.62</strong>), Scene Classification (<strong>53.08</strong>), Object Spatial Relationship (<strong>42.25</strong>), and Object Properties (<strong>57.58</strong>), with improvements of <strong>2.37</strong>, <strong>1.41</strong>, <strong>8.05</strong>, and <strong>16.86</strong> points over the strongest baseline in each category. GeoVista uses more tool calls per question (<strong>3.82</strong> Tools/Q) while maintaining a lower token consumption per reasoning turn (<strong>164.96</strong> Tok/Turn) than ZoomEarth (<strong>274.30</strong>) and GeoEyes (<strong>263.15</strong>), suggesting that exploration is distributed across multiple concise local observations rather than a long single-chain zooming trajectory.
           </p>
         </div>
       </div>
@@ -348,7 +435,7 @@
         <img src="./static/images/4.4.png" alt="Table 3: Effect of SFT Trajectory Data" class="floating-img">
         <div class="caption-text">
           <p>
-            To analyze the role of SFT trajectory data before RL alignment, we compared Qwen2.5-VL-7B fine-tuned on APEX-GRO against other trajectory datasets like LRS-GRO and UHR-CoZ. The results indicate that shallow interactions or strictly sequential trajectories may bias the model toward narrow visual search patterns. APEX-GRO provides a much more stable initialization, equipping the model with structured tool use, normalized spatial references, and multi-scale Global-Region-Object exploration patterns—creating a robust, RL-ready initialization.
+            To analyze the role of SFT trajectory data before RL alignment, we compare Qwen2.5-VL-7B fine-tuned on APEX-GRO against LRS-GRO and UHR-CoZ under identical SFT settings. LRS-GRO brings only marginal gains and degrades XLRS-Bench performance, while UHR-CoZ causes severe drops on RSHR-Bench and XLRS-Bench. APEX-GRO improves RSHR-Bench by <strong>2.45</strong> points and LRS-VQA by <strong>4.24</strong> points over the base model, providing structured tool use, normalized spatial references, and Global–Region–Object exploration patterns as an RL-ready initialization. Starting from the APEX-GRO SFT checkpoint, GRPO alignment further improves XLRS-Bench from <strong>40.53</strong> to <strong>52.78</strong>.
           </p>
         </div>
       </div>
@@ -360,7 +447,7 @@
         <img src="./static/images/4.5.png" alt="Figure 6: Training Dynamics of the GRPO Alignment Phase" class="floating-img">
         <div class="caption-text">
           <p>
-            While SFT teaches the model to imitate structured trajectories, GRPO alignment optimizes exploration decisions in unseen UHR scenes. Starting from the APEX-GRO SFT checkpoint, GRPO alignment significantly improves XLRS-Bench performance from 40.53 to 52.78. Training dynamics reveal that as training progresses, tool usage and observation length increase, indicating a shift from supervised imitation to active reward-based multi-region inspection and explicit evidence aggregation.
+            While SFT teaches the model to imitate structured trajectories, GRPO alignment optimizes exploration decisions in unseen UHR scenes. Starting from the APEX-GRO SFT checkpoint, XLRS-Bench performance improves from <strong>40.53</strong> to <strong>52.78</strong>. The improvement is not immediately monotonic: performance drops to <strong>36.46</strong> at Step 400, then recovers to <strong>45.36</strong> at Step 800 and <strong>51.73</strong> at Step 1040. As training progresses, tool usage and observation length increase, indicating a transition from supervised imitation to reward-based multi-region inspection and explicit evidence aggregation.
           </p>
         </div>
       </div>
@@ -385,11 +472,11 @@
           </p>
         </div> -->
 
-        <h3 class="caption-title">Experimental results on the XHR benchmark (Full Indicators)</h3>
-        <img src="./static/images/4.6.png" alt="Detailed Performance on XHR Benchmark" class="floating-img">
+        <h3 class="caption-title">Experimental results on the RSHR-Bench benchmark (Full Indicators)</h3>
+        <img src="./static/images/4.6.png" alt="Detailed Performance on RSHR-Bench" class="floating-img">
         <div class="caption-text" style="margin-bottom: 3rem;">
           <p>
-           The overall tasks include visual perception, reasoning, and multi-turn dialogue tasks. GeoVista maintains consistent performance advantages across both perception and complex reasoning dimensions.
+            The overall tasks include visual perception, reasoning, and multi-turn dialogue. GeoVista maintains consistent advantages across perception and complex reasoning dimensions, including strong gains on color detection, object classification, and regional counting.
           </p>
         </div>
         
@@ -397,7 +484,7 @@
         <img src="./static/images/4.7.png" alt="Detailed Performance on LRS-VQA Dataset" class="floating-img">
         <div class="caption-text">
           <p>
-           The sub-tasks breakdown includes object background, category, color, shape, status, reasoning, and rural or urban classification. Our method achieves state-of-the-art across a broad set of open-ended semantic evaluation metrics.
+           The sub-tasks include object background, category, color, shape, status, reasoning, and rural/urban classification. GeoVista achieves the best average score (<strong>27.71</strong>) and the strongest rural/urban classification performance (<strong>63.11</strong>) among compared methods.
           </p>
         </div>
       </div>
