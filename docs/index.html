@@ -36,16 +36,16 @@
   <script defer src="./static/js/fontawesome.all.min.js"></script>
   <script src="./static/js/index.js?v=2"></script>
 
-  <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        displayMath: [['$$', '$$'], ['\\[', '\\]']],
-        processEscapes: true
-      }
-    };
-  </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <link rel="stylesheet" href="./static/katex/katex.min.css">
+  <script defer src="./static/katex/katex.min.js"></script>
+  <script defer src="./static/katex/contrib/auto-render.min.js"
+          onload="renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false
+          });"></script>
 
   <style>
     /* 独立的大标题区块样式 (用于 Methodology, Experimental Results, Citation) */
