@@ -26,14 +26,71 @@
 
   <link rel="stylesheet" href="./static/css/bulma.min.css">
   <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
   <link rel="icon" href="./static/images/logo_geovista.png">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
   <script src="./static/js/index.js"></script>
+
+  <style>
+    /* 独立的大标题区块样式 (用于 Methodology, Experimental Results, Citation) */
+    .section-header {
+      background-color: #f2f2f2;
+      padding: 3rem 1.5rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      border-top: 1px solid #e5e5e5;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .section-title {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #363636;
+      margin: 0;
+      letter-spacing: 2px;
+    }
+    
+    /* 悬浮图片阴影样式 */
+    .floating-img {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      display: block;
+      margin: 20px auto 25px auto;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #eaeaea;
+    }
+
+    /* 图表标题（上方） */
+    .caption-title {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+      margin-top: 40px;
+    }
+
+    /* 图表解释文本（下方） */
+    .caption-text {
+      text-align: justify;
+      color: #4a4a4a;
+      font-size: 1rem;
+      line-height: 1.6;
+      padding: 0 15px;
+    }
+    
+    /* 确保所有的标题居中 */
+    .is-centered-title {
+      text-align: center !important;
+      margin-bottom: 25px !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -93,7 +150,37 @@
                       <i class="fab fa-github"></i>
                   </span>
                   <span>Code & Dataset</span>
-                  </a>
+                </a>
+              </span>
+
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2605.14475"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+
+              <span class="link-block">
+                <a href="https://huggingface.co/collections/ryan6073/apex-gro"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <span style="font-size: 1.2em;">🤗</span>
+                  </span>
+                  <span>Dataset</span>
+                </a>
+              </span>
+
+              <span class="link-block">
+                <a href="https://huggingface.co/collections/ryan6073/geovista"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <span style="font-size: 1.2em;">🤗</span>
+                  </span>
+                  <span>Model</span>
+                </a>
               </span>
             </div>
           </div>
@@ -103,23 +190,25 @@
   </div>
 </section>
 
-<section class="hero teaser">
+<section class="hero teaser" style="background-color: #f5f5f5; padding-top: 3rem; padding-bottom: 3rem;">
   <div class="container is-max-desktop">
-    <div class="hero-body has-text-centered">
-      <img src="./static/images/comparison_of_methods.jpg" alt="Comparison of active perception paradigms" style="max-width: 100%; height: auto;"/>
-      <h2 class="subtitle has-text-centered" style="margin-top: 15px;">
-        <strong>GeoVista</strong> replaces single-trajectory bias with planning-driven multi-branch exploration.
-      </h2>
+    <div class="columns is-centered">
+      <div class="column is-full-width has-text-centered">
+        <img src="./static/images/comparison_of_methods.jpg" alt="Comparison of active perception paradigms" class="floating-img" style="margin-top: 0;"/>
+        <!-- <p class="subtitle has-text-centered" style="margin-top: 20px; font-size: 1.1rem; color: #555;">
+          <strong>GeoVista</strong> replaces single-trajectory bias with planning-driven multi-branch exploration.
+        </p> -->
+      </div>
     </div>
   </div>
 </section>
 
-<section class="section">
+<section class="section" style="padding-top: 4rem; padding-bottom: 4rem;">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
+      <div class="column is-10">
+        <h2 class="title is-3 is-centered-title" style="margin-bottom: 1.5rem;">Abstract</h2>
+        <div class="content has-text-justified" style="font-size: 1.05rem;">
           <p>
             Interpreting ultra-high-resolution (UHR) remote sensing images requires models to search for sparse and tiny visual evidence across large-scale scenes. Existing remote sensing vision-language models can inspect local regions with zooming and cropping tools, but most exploration strategies follow either a one-shot focus or a single sequential trajectory. Such single-path exploration can lose global context, leave scattered regions unvisited, and revisit or count the same evidence multiple times. 
           </p>
@@ -132,59 +221,199 @@
         </div>
       </div>
     </div>
-    </div>
-</section>
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-          <div class="column is-full-width">
-            <h2 class="title is-3">GRPO-Based Agentic Alignment</h2>
-            <div class="content has-text-justified">
-              <p>
-                After supervised fine-tuning, the model's exploration strategy is optimized using Group Relative Policy Optimization (GRPO). We apply multi-dimensional constraints including an accuracy reward, an IoU reward, and a state-aware dynamic plan reward. 
-              </p>
-              <p>
-                Crucially, the perception framework is highly penalized for spatial hallucinations. The mathematical logic of our ground-truth center distance reward dictates that a <strong>smaller distance must dynamically yield a higher accuracy reward</strong>, explicitly forcing the model to hone in on sub-pixel level object centers during multi-hop verification.
-              </p>
-            </div>
-          </div>
-      </div>
   </div>
-</section> 
+</section>
 
-<section class="section">
+<section class="section-header">
   <div class="container is-max-desktop">
-
-    <div class="columns is-centered">
-      <div class="content">
-        <h2 class="title is-3">APEX-GRO Training Set</h2>
-        <p>
-          To provide a cold start for cross-scale tool-interleaved reasoning, we constructed <strong>APEX-GRO</strong>. It is designed specifically as a training set to induce active perception capabilities, rather than a benchmark dataset. It encapsulates UHR tasks into a Global-Region-Object interactive reasoning process to teach the model how to effectively search and verify sparse evidence.
-        </p>
-      </div>
-    </div>
-    
-    </div>
+    <h2 class="section-title">Methodology</h2>
+  </div>
 </section>
 
 <section class="section">
   <div class="container is-max-desktop">
-      <h2 class="title is-3">Scale-Invariant Spatial Syntax</h2>
-      <div class="columns is-centered">
-        <div class="column content">
+    
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="caption-title">APEX-GRO: Cross-Scale Interleaved Trajectory Construction</h3>
+        <img src="./static/images/data_construction.png" alt="Figure 3: APEX-GRO Data Construction Pipeline" class="floating-img">
+        <div class="caption-text">
           <p>
-            A central challenge in UHR reasoning is that objects vary drastically in pixel scale across crop levels. To resolve this, GeoVista employs a discrete relative coordinate system mapped rigidly from <strong>0 to 1000</strong>, entirely bypassing the use of absolute physical pixels. This ensures robust spatial references regardless of the local crop resolution.
+            To provide a cold start for this behavior, we construct <strong>APEX-GRO</strong> (Active Planning and Execution across Global-Region-Object levels), a <strong>supervised trajectory corpus</strong> for tool-interleaved UHR reasoning. Each trajectory in APEX-GRO is represented as a <strong>sequence of reasoning states, tool actions, visual observations, and evidence updates</strong>. APEX-GRO is synthesized through a <strong>four-stage pipeline</strong>: <strong>First</strong>, we collect diverse RS data sources, including DOTA-v1.5 and FAIR1M for visual grounding, AID , UC-Merced , NWPU-RESISC45, and WHU-RS19 for scene classification, GeoLLaVA-8K for high-resolution spatial reasoning, and EarthVQA for urban/rural categorization. <strong>Second</strong>, a context engine converts available annotations into a nested task checklist that specifies targets and sub-goals to be resolved. The checklist only guides task decomposition; exact oracle coordinates and final answers are hidden from the teacher model, reserved for automatic validation and human verification. <strong>Third</strong>, a teacher VLM (gemini-3.1-flash-lite-preview) generates tool-interleaved trajectories by alternating among reasoning, planning, crop-based inspection, and evidence tracking. <strong>Finally</strong>, we apply quality control to remove trajectories with coordinate leakage, invalid tool syntax, malformed spatial references, or inconsistent final answers, and drop evaluation benchmark overlaps.
+          </p>
+          <p>
+            APEX-GRO organizes UHR perception into a <strong>three-level hierarchy</strong>. At the <strong>Global level</strong> (L<sub>0</sub>), the model observes a downsampled global view and produces a macroscopic exploration plan. At the <strong>Region level</strong> (L<sub>1</sub>), it inspects candidate ROIs to verify structural patterns and narrow down task-relevant areas. At the <strong>Object level</strong> (L<sub>2</sub>), it performs fine-grained inspection for small targets, object attributes, and precise localization. Furthermore, because absolute pixel coordinates do not generalize well across image sizes, while unrestricted continuous coordinates are difficult to serialize reliably in language-model outputs, we therefore adopt a <strong>discrete relative coordinate system</strong>. This representation provides a nominal relative resolution of 0.1% within each ROI and <strong>decouples spatial outputs from the absolute image resolution</strong>.
           </p>
         </div>
+      </div>
     </div>
-    
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="caption-title">GeoVista: Observe-Plan-Track Active Perception Framework</h3>
+        <div class="caption-text">
+          <p>
+            GeoVista follows the same action space and spatial syntax as APEX-GRO during inference. Given an UHR image and a query, it <strong>avoids greedily committing to a single zooming path</strong>. Instead, it first constructs a global plan over multiple ROIs, and then verifies these ROIs with local observations while maintaining a structured evidence state. Because all branches correspond to different planned ROIs but share a global plan, we refer to this process as <strong>multi-branch exploration</strong>. The framework operates through four key steps:
+          </p>
+          <p>
+            <strong>1. Observe (Global Scene Observation):</strong> GeoVista first obtains a downsampled global view V<sup>0</sup><sub>global</sub> of the UHR image. This view provides broad spatial coverage and supports reasoning about scene layout, potential target distribution, and task-relevant search regions. It does not resolve all fine-grained details but provides the necessary context for exploration planning.
+          </p>
+          <p>
+            <strong>2. Plan (Multi-ROI Exploration Planning):</strong> Conditioned on Q and V<sup>0</sup><sub>global</sub>, the policy <strong>generates a structured plan</strong>. Each item in the plan records an ROI, a verification goal, and its current status. The plan specifies exactly which regions should be inspected and what evidence should be verified, enabling <strong>targeted exploration instead of unstructured zooming</strong>.
+          </p>
+          <p>
+            <strong>3. Track (Branch-wise Verification and Evidence Update):</strong> For each pending ROI, GeoVista extracts a high-resolution crop from the original image and decodes a branch trajectory. The evidence state E is updated after each branch, recording the inspected ROI, global coordinates, verification status, local observations, detected objects, and unresolved sub-goals. Local crop coordinates are <strong>mapped back to the global image frame</strong> before updating, which helps <strong>reduce redundant exploration and duplicated counting</strong>. If a crop remains ambiguous, GeoVista can append a sub-plan and inspect at a finer scale.
+          </p>
+          <p>
+            <strong>4. Evidence Aggregation:</strong> After branch-wise verification, GeoVista <strong>aggregates the evidence state into a final prediction</strong>. This step maps local findings back to their corresponding nodes in the global plan, forming a <strong>hierarchical evidence tree</strong> with verified observations, rejected hypotheses, and unresolved cases. Ultimately, the final answer is generated from organized spatial evidence rather than an unstructured long reasoning history.
+          </p>
+        </div>
+      </div>
     </div>
+
+  <div class="columns is-centered">
+  <div class="column is-full-width">
+    <h3 class="caption-title">Training Pipeline: Supervised Cold-Start and GRPO Alignment</h3>
+    <img src="./static/images/training_pipeline.png" alt="Figure 4: Training Pipeline of GeoVista" class="floating-img">
+    <div class="caption-text">
+      <p>
+        As illustrated in the figure above, GeoVista is trained in two stages.
+      </p>
+      
+      <p>
+        <strong>Stage I: Supervised Fine-Tuning.</strong> The first stage performs SFT on APEX-GRO to initialize the model with tool syntax, scale-invariant spatial grounding, and cross-scale reasoning patterns. By optimizing the model to imitate interleaved reasoning trajectories, SFT teaches the model to produce parseable outputs encompassing reasoning text, plan items, tool calls, evidence updates, and final answers. This decomposes large-scale visual reasoning into global observation, regional inspection, and object-level verification.
+      </p>
+
+      <p>
+        <strong>Stage II: GRPO Alignment.</strong> The second stage applies GRPO-based alignment to improve long-horizon active perception on verifiable tasks. To comprehensively evaluate the trajectories, the multi-dimensional reward function combines the following score items:
+      </p>
+      
+      <ul style="list-style-type: disc; margin-left: 20px; margin-bottom: 15px;">
+        <li>
+          <strong>Format Validity Reward:</strong> Ensures the structural correctness of the generated trajectories and tool syntax.
+        </li>
+        <li>
+          <strong>Accuracy Reward (r<sub>acc</sub>):</strong> Evaluates the correctness of the final task output (e.g., counting or visual grounding).
+        </li>
+        <li>
+          <strong>IoU Reward (r<sub>iou</sub>) / Localization Quality:</strong> Evaluates localization against matched ground-truth targets and penalizes artificially enlarged regions. This encourages the model to precisely localize objects rather than relying on coarse or over-expanded regions.
+        </li>
+        <li>
+          <strong>State-Aware Dynamic Plan Reward (r<sub>plan</sub>):</strong> Encourages the model to plan before acting, follow the plan during exploration, and consistently update the evidence state. Plan execution is evaluated using a lightweight state machine combined with a task-dependent difficulty coefficient. Valid executions are rewarded more strongly on difficult examples, while bypassing verification or committing severe state violations (e.g., skipping unvisited regions) incurs fixed penalties.
+        </li>
+      </ul>
+    </div>
+    </div>
+   </div>
+
+  </div>
 </section>
 
-<section class="section" id="BibTeX">
+<section class="section-header">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Experimental Results</h2>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="caption-title">Overall comparison on UHR remote sensing benchmarks</h3>
+        <img src="./static/images/4.2.png" alt="Table 1 / Figure 5: Overall Comparison on UHR Benchmarks" class="floating-img">
+        <div class="caption-text">
+          <p>
+            We evaluate GeoVista on three UHR remote sensing benchmarks: <strong>XLRS-Bench</strong>, <strong>RSHR-Bench</strong>, and <strong>LRS-VQA</strong>. Compared against 19 diverse representative baselines, GeoVista achieves the best overall performance, scoring 43.10 on RSHR-Bench, 52.78 on XLRS-Bench, and 27.71 on LRS-VQA. It significantly outperforms the strongest sequential zoom-in baseline (GeoEyes), demonstrating that increasing visual input capacity alone is insufficient without adaptive multi-region evidence acquisition.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="caption-title">Fine-Grained Analysis on XLRS-Bench</h3>
+        <img src="./static/images/4.3.png" alt="Table 2: Fine-Grained Results on XLRS-Bench" class="floating-img">
+        <div class="caption-text">
+          <p>
+            GeoVista consistently achieves the best results across all perception sub-categories, including Counting (43.62), Scene Classification (53.08), Object Spatial Relationship (42.25), and Object Properties (57.58). Furthermore, GeoVista exhibits a distinct inference pattern: it utilizes more tool calls per question (3.82 Tools/Q) reflecting its broader multi-ROI exploration, while maintaining a lower token consumption per reasoning turn compared to existing long single-chain zoom-in methods.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="caption-title">Effect of SFT Trajectory Data</h3>
+        <img src="./static/images/4.4.png" alt="Table 3: Effect of SFT Trajectory Data" class="floating-img">
+        <div class="caption-text">
+          <p>
+            To analyze the role of SFT trajectory data before RL alignment, we compared Qwen2.5-VL-7B fine-tuned on APEX-GRO against other trajectory datasets like LRS-GRO and UHR-CoZ. The results indicate that shallow interactions or strictly sequential trajectories may bias the model toward narrow visual search patterns. APEX-GRO provides a much more stable initialization, equipping the model with structured tool use, normalized spatial references, and multi-scale Global-Region-Object exploration patterns—creating a robust, RL-ready initialization.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="caption-title">Training dynamics of the GRPO alignment phase</h3>
+        <img src="./static/images/4.5.png" alt="Figure 6: Training Dynamics of the GRPO Alignment Phase" class="floating-img">
+        <div class="caption-text">
+          <p>
+            While SFT teaches the model to imitate structured trajectories, GRPO alignment optimizes exploration decisions in unseen UHR scenes. Starting from the APEX-GRO SFT checkpoint, GRPO alignment significantly improves XLRS-Bench performance from 40.53 to 52.78. Training dynamics reveal that as training progresses, tool usage and observation length increase, indicating a shift from supervised imitation to active reward-based multi-region inspection and explicit evidence aggregation.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section-header">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Extended Fine-Grained Results</h2>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <!-- <div class="caption-text" style="margin-bottom: 2rem;">
+          <p>
+            Building upon the fine-grained analysis of XLRS-Bench, we provide comprehensive evaluations across all sub-tasks on the XHR (RSHR) and LRS-VQA datasets. These detailed results provide a comprehensive comparison against state-of-the-art static baselines and hierarchical zooming-based methods, confirming GeoVista's robustness in diverse perceptual challenges.
+          </p>
+        </div> -->
+
+        <h3 class="caption-title">Experimental results on the XHR benchmark (Full Indicators)</h3>
+        <img src="./static/images/4.6.png" alt="Detailed Performance on XHR Benchmark" class="floating-img">
+        <div class="caption-text" style="margin-bottom: 3rem;">
+          <p>
+           The overall tasks include visual perception, reasoning, and multi-turn dialogue tasks. GeoVista maintains consistent performance advantages across both perception and complex reasoning dimensions.
+          </p>
+        </div>
+        
+        <h3 class="caption-title">Experimental results on the LRS-VQA dataset</h3>
+        <img src="./static/images/4.7.png" alt="Detailed Performance on LRS-VQA Dataset" class="floating-img">
+        <div class="caption-text">
+          <p>
+           The sub-tasks breakdown includes object background, category, color, shape, status, reasoning, and rural or urban classification. Our method achieves state-of-the-art across a broad set of open-ended semantic evaluation metrics.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-header" id="BibTeX">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Citation</h2>
+  </div>
+</section>
+
+<section class="section" style="padding-top: 0;">
   <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
-    <pre><code>@misc{zhu2026geovistavisuallygroundedactive,
+    <pre style="background-color: #f6f8fa; border-radius: 10px; padding: 25px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); font-size: 1.1em; color: #333; overflow-x: auto;"><code>@misc{zhu2026geovistavisuallygroundedactive,
       title={GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding}, 
       author={Jiashun Zhu and Ronghao Fu and Jiasen Hu and Nachuan Xing and Xu Na and Xiao Yang and Zhiwen Lin and Weipeng Zhang and Lang Sun and Zhiheng Xue and Haoran Liu and Weijie Zhang and Bo Yang},
       year={2026},
