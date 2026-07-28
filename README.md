@@ -1,6 +1,6 @@
 <div align="center">
   <h1 style="font-size: 32px; font-weight: bold; margin: 0; display: inline-block;">
-    <img src="assets/logo_geovista.png" alt="logo" height="50" style="vertical-align: middle; margin-right: 8px; display: inline-block;">GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding
+    <img src="assets/logo_geovista.png" alt="logo" height="50" style="vertical-align: middle; margin-right: 8px; display: inline-block;">GeoVista: Visually Grounded Active Perception for Vision-Language Understanding of Ultra-High-Resolution Remote Sensing Images
   </h1>
   
   <br clear="all">
@@ -174,14 +174,11 @@ python -m verl.trainer.main_ppo --config-path training/RL/geovista_grpo.yaml
 如果您觉得本项目对您的研究有所帮助，请考虑引用：
 
 ```bibtex
-@misc{zhu2026geovistavisuallygroundedactive,
-      title={GeoVista: Visually Grounded Active Perception for Ultra-High-Resolution Remote Sensing Understanding}, 
-      author={Jiashun Zhu, Ronghao Fu, Jiasen Hu, Nachuan Xing and others},
-      year={2026},
-      eprint={2605.14475},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2605.14475}, 
+@article{zhu2026geovista,
+  title={GeoVista: Visually Grounded Active Perception for Vision-Language Understanding of Ultra-High-Resolution Remote Sensing Images},
+  author={Zhu, Jiashun and Fu, Ronghao and Hu, Jiasen and Huang, Jing and Xing, Nachuan and Yang, Bo},
+  journal={arXiv preprint arXiv:2605.14475},
+  year={2026}
 }
 
 ```
