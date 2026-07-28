@@ -1,28 +1,35 @@
 <div align="center">
   <h1 style="font-size: 32px; font-weight: bold; margin: 0; display: inline-block;">
-    <img src="assets/logo_geovista.png" alt="logo" height="50" style="vertical-align: middle; margin-right: 8px; display: inline-block;">GeoVista: Visually Grounded Active Perception for Vision-Language Understanding of Ultra-High-Resolution Remote Sensing Images
+    <img src="assets/logo_geovista.png" alt="logo" height="50" style="vertical-align: middle; margin-right: 8px; display: inline-block;">
+    GeoVista: Visually Grounded Active Perception for Vision-Language Understanding of Ultra-High-Resolution Remote Sensing Images
   </h1>
   
   <br clear="all">
   <br>
 
-  <a href="https://arxiv.org/abs/2605.14475">
-    <img src="https://img.shields.io/badge/ArXiv-GeoVista-brown?logo=arxiv" alt="Paper">
-  </a>
-  <a href="https://huggingface.co/collections/ryan6073/apex-gro">
-    <img src="https://img.shields.io/badge/🤗 huggingface-Dataset-blue" alt="dataset">
-  </a>
-  <a href="https://huggingface.co/collections/ryan6073/geovista">
-    <img src="https://img.shields.io/badge/🤗 huggingface-Model-purple" alt="checkpoint">
-  </a>
-  <a href="https://ryan6073.github.io/GeoVista/">
-    <img src="https://img.shields.io/badge/-HomePage-black?logo=github" alt="homepage">
-  </a>
+  <!-- 四个徽章水平放置 -->
+  <p align="center">
+    <a href="https://arxiv.org/abs/2605.14475">
+      <img src="https://img.shields.io/badge/ArXiv-GeoVista-brown?logo=arxiv" alt="Paper">
+    </a>
+    <a href="https://huggingface.co/collections/ryan6073/apex-gro">
+      <img src="https://img.shields.io/badge/🤗 huggingface-Dataset-blue" alt="dataset">
+    </a>
+    <a href="https://huggingface.co/collections/ryan6073/geovista">
+      <img src="https://img.shields.io/badge/🤗 huggingface-Model-purple" alt="checkpoint">
+    </a>
+    <a href="https://ryan6073.github.io/GeoVista/">
+      <img src="https://img.shields.io/badge/-HomePage-black?logo=github" alt="homepage">
+    </a>
+  </p>
 </div>
 
 ---
 
-![OverView](assets/comparison_of_methods.jpg)
+<!-- OverView 图片居中 -->
+<p align="center">
+  <img src="assets/comparison_of_methods.jpg" alt="OverView">
+</p>
 
 ## Contents:
 
