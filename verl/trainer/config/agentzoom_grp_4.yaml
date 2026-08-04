@@ -3,7 +3,7 @@ defaults:
   - ppo_trainer
   - _self_
 custom_reward_function:
-  path: /srv/user/zhujs/work/ultrars/training/DeepEyes/verl/utils/reward_score/vl_agent_agentzoom.py
+  path: verl/utils/reward_score/vl_agent_agentzoom.py
   name: compute_score
   reward_kwargs:
     gamma: 0.8
@@ -18,9 +18,9 @@ vs_debug: false
 
 data:
   train_files:
-    - /srv/user/zhujs/data/datasets/AgentZoom/AgentZoom_train_merged.parquet
+    - data/reasoning_rl.parquet
   val_files:
-    - /srv/user/zhujs/data/datasets/AgentZoom/AgentZoom_train_merged.parquet
+    - data/reasoning_rl.parquet
   train_batch_size: 16
   max_prompt_length: 8192
   max_response_length: 16384
@@ -35,7 +35,7 @@ algorithm:
 actor_rollout_ref:
   model:
     enable_gradient_checkpointing: true
-    path: /srv/user/zhujs/work/ultrars/training/LlamaFactory/models/qwen2_5_vl
+    path: models/qwen2_5_vl
     use_remove_padding: true
 
   actor:
@@ -89,7 +89,7 @@ trainer:
   test_freq: 10000
   project_name: agent_zoom_v2
   experiment_name: agent_zoom_exp
-  default_local_dir: /srv/user/zhujs/work/ultrars/training/DeepEyes/verl/verl_ckpts/agent_zoom_v2
-  tensorboard_dir: /srv/user/zhujs/work/ultrars/training/DeepEyes/verl/verl_ckpts/logs/tensorboard
-  rl_logging_board_dir: /srv/user/zhujs/work/ultrars/training/DeepEyes/verl/verl_ckpts/logs/rl_logging_board
+  default_local_dir: checkpoints/rl/agent_zoom_v2
+  tensorboard_dir: logs/tensorboard
+  rl_logging_board_dir: logs/rl_logging_board
   total_epochs: 3

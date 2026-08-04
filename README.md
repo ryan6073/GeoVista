@@ -80,10 +80,6 @@ uv pip install flash-attn --no-build-isolation
 * **GeoVista-7B-Instruct**: [https://huggingface.co/ryan6073/GeoVista-7B-Instruct]
 * **GeoVista-7B-Preview**: [https://huggingface.co/ryan6073/GeoVista-7B-Preview]
 
-### Training Dataset
-
-...
-
 ## Demo
 
 您可以使用内置的 `GeoVistaAgent` 启动单张图像的交互式主动感知任务。框架会自动注册物理执行工具，并处理模型在全局与局部视图间的多轮推理与容错逻辑。
