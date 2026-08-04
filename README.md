@@ -191,8 +191,12 @@ python -m verl.trainer.main_ppo --config-path training/RL/geovista_grpo.yaml
 * 本项目基于 [vLLM](https://github.com/vllm-project/vllm), [verl](https://github.com/verl-project/verl) 以及 [LLaMA-Factory](https://github.com/hiyouga/LlamaFactory) 构建。
 * 感谢 [Qwen](https://github.com/QwenLM/Qwen) 团队提供的强大视觉语言基础模型。
 
-<p align="center">
-  <a href="https://star-history.com/#ryan6073/GeoVista&Date">
-    <img src="https://api.star-history.com/svg?repos=ryan6073/GeoVista&type=Date" alt="GitHub Star History Chart" width="100%" />
-  </a>
-</p>
+## Star History
+
+<a href="https://www.star-history.com/?repos=ryan6073%2FGeoVista&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=ryan6073/GeoVista&type=date&theme=dark&legend=top-left&sealed_token=91yLJLmyVFkwi770rivIdZ6U2WcIb9023c-O4oKWUQW5V2DB4RVNGhhNsAIVxJNwOSlaumGyvdUQZkzZ3ZMNRmZ6Xb7-VyQqpg5YXYQ0oWJFMZBqK7LsFA" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=ryan6073/GeoVista&type=date&legend=top-left&sealed_token=91yLJLmyVFkwi770rivIdZ6U2WcIb9023c-O4oKWUQW5V2DB4RVNGhhNsAIVxJNwOSlaumGyvdUQZkzZ3ZMNRmZ6Xb7-VyQqpg5YXYQ0oWJFMZBqK7LsFA" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=ryan6073/GeoVista&type=date&legend=top-left&sealed_token=91yLJLmyVFkwi770rivIdZ6U2WcIb9023c-O4oKWUQW5V2DB4RVNGhhNsAIVxJNwOSlaumGyvdUQZkzZ3ZMNRmZ6Xb7-VyQqpg5YXYQ0oWJFMZBqK7LsFA" />
+ </picture>
+</a>
