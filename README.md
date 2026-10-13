@@ -28,7 +28,11 @@
 
 <!-- OverView 图片居中 -->
 <p align="center">
-  <img src="assets/comparison_of_methods.jpg" alt="OverView">
+  <img src="assets/comparison_of_methods.jpg" alt="One-shot focus, repeat focus, and multi-region adaptive perception" width="100%">
+</p>
+
+<p align="center">
+  <em>一次聚焦只能看一个局部，重复聚焦又缺少全局规划与跨区域记忆。GeoVista 先并行提出多个区域，对证据不足的区域再放大，最后汇总跨区域证据。</em>
 </p>
 
 ## Contents:
