@@ -2,8 +2,6 @@ import os
 import json
 import re
 from collections import defaultdict
-import nltk
-from nltk.corpus import wordnet as wn
 
 # ==============================================================================
 # 分类映射表
@@ -53,6 +51,8 @@ XHR_TAXONOMY = {
 def _extract_choice(s: str) -> str:
     if not s or not isinstance(s, str): return ""
     s = s.strip()
+    if s.lower().startswith("error:"):
+        return ""
     prefixes = ["The best answer is", "The correct answer is", "Answer:", "The answer is", "The best option is", "The correct option is", "Best answer:"]
     for prefix in prefixes:
         s = re.sub(re.escape(prefix), "", s, flags=re.IGNORECASE).strip()
@@ -179,6 +179,8 @@ def eval_xhr(input_file: str, output_file: str):
 
 
 def _are_synonyms(word1: str, word2: str) -> bool:
+    import nltk
+    from nltk.corpus import wordnet as wn
     try:
         for s1 in wn.synsets(word1):
             for s2 in wn.synsets(word2):
@@ -188,6 +190,24 @@ def _are_synonyms(word1: str, word2: str) -> bool:
         nltk.download('wordnet')
         return _are_synonyms(word1, word2)
     return False
+
+
+def eval_mme(input_file: str, output_file: str):
+    metrics = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: {"true": 0, "false": 0})))
+    with open(input_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            if not line.strip(): continue
+            doc = json.loads(line)
+            pred = _extract_choice(doc.get("model_output", ""))
+            ans = str(doc.get("Ground truth", doc.get("answer", ""))).strip().upper()
+            l1 = str(doc.get("Task") or "Perception")
+            l2 = str(doc.get("Subtask") or "Remote Sensing")
+            l3 = str(doc.get("Category") or "unknown")
+
+            is_correct = 1 if set(pred) == set(ans) and pred != "" else 0
+            metrics[l1][l2][l3]["true"] += is_correct
+            metrics[l1][l2][l3]["false"] += 1 - is_correct
+    _write_hierarchical_report(metrics, output_file, "MME")
 
 
 def eval_lrs(input_file: str, output_file: str):
@@ -236,3 +256,4 @@ def run_evaluation(dataset_name: str, input_file: str, output_file: str):
     if dataset_name == 'xlrs': eval_xlrs(input_file, output_file)
     elif dataset_name == 'xhr': eval_xhr(input_file, output_file)
     elif dataset_name == 'lrs': eval_lrs(input_file, output_file)
+    elif dataset_name == 'mme': eval_mme(input_file, output_file)
