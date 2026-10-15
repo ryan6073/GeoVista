@@ -27,11 +27,23 @@ if not logger.handlers:
 
 
 class AgentZoomRewardManager:
-    def __init__(self, gamma=0.8, beta=0.2, lambda_g=120.0, lambda_c=0.15):
-        self.gamma = gamma    
-        self.beta = beta      
+    def __init__(
+        self,
+        gamma=0.8,
+        beta=0.2,
+        lambda_g=120.0,
+        lambda_c=0.15,
+        alpha_plan=1.0,
+        beta_plan=0.2,
+        gamma_plan=0.8,
+    ):
+        self.gamma = gamma
+        self.beta = beta
         self.lambda_g = lambda_g
         self.lambda_c = lambda_c
+        self.alpha_plan = alpha_plan
+        self.beta_plan = beta_plan
+        self.gamma_plan = gamma_plan
 
     @staticmethod
     def compute_iou(box1, box2):
@@ -123,23 +135,35 @@ _BOUNDARY_RE = re.compile(
 )
 
 
-def plan_reward(events, difficulty, alpha=1.0, beta=0.2):
-    """Score one plan that is executed in order.
+def plan_reward(
+    events,
+    difficulty,
+    alpha_plan=1.0,
+    beta_plan=0.2,
+    gamma_plan=0.8,
+):
+    """Score plan execution.
 
-    A positive reward requires exactly one plan, unique items, and this order
-    for every item: a successful tool observation of that item, then a progress
-    mark for that same item. The answer is valid only after the last item.
+    - Complete, legal execution: +α_plan · D
+    - Illegal execution: -γ_plan
+    - No plan: -β_plan · D
+
+    Illegal includes empty/duplicate items, multiple plans, tool failure,
+    spatial id mismatch (exact rounded bbox id, no IoU soft match), out-of-order
+    tracking, progress without a prior successful tool, and answering early.
     """
     plans = [e for e in events if e["type"] == "plan"]
     if not plans:
-        return 0.0
+        return -beta_plan * difficulty
+
+    illegal = -gamma_plan
 
     if len(plans) != 1:
-        return -beta * difficulty
+        return illegal
 
     items = plans[0].get("items", [])
     if not items or len(items) != len(set(items)):
-        return -beta * difficulty
+        return illegal
 
     next_item = 0
     observed = False
@@ -154,7 +178,7 @@ def plan_reward(events, difficulty, alpha=1.0, beta=0.2):
                 or event.get("plan_id") != items[next_item]
                 or not event.get("success", False)
             ):
-                return -beta * difficulty
+                return illegal
             observed = True
 
         elif kind == "progress":
@@ -163,7 +187,7 @@ def plan_reward(events, difficulty, alpha=1.0, beta=0.2):
                 or event.get("completed") != items[next_item]
                 or not observed
             ):
-                return -beta * difficulty
+                return illegal
             next_item += 1
             observed = False
 
@@ -171,22 +195,9 @@ def plan_reward(events, difficulty, alpha=1.0, beta=0.2):
             answered = True
             break
 
-    if answered and next_item == len(items):
-        return alpha * difficulty
-    return -beta * difficulty
-
-
-def _box_iou(box1, box2):
-    b1 = [min(box1[0], box1[2]), min(box1[1], box1[3]), max(box1[0], box1[2]), max(box1[1], box1[3])]
-    b2 = [min(box2[0], box2[2]), min(box2[1], box2[3]), max(box2[0], box2[2]), max(box2[1], box2[3])]
-    x1, y1 = max(b1[0], b2[0]), max(b1[1], b2[1])
-    x2, y2 = min(b1[2], b2[2]), min(b1[3], b2[3])
-    inter = max(0.0, x2 - x1) * max(0.0, y2 - y1)
-    if inter <= 0:
-        return 0.0
-    area1 = (b1[2] - b1[0]) * (b1[3] - b1[1])
-    area2 = (b2[2] - b2[0]) * (b2[3] - b2[1])
-    return inter / float(area1 + area2 - inter + 1e-8)
+    if answered and next_item == len(items) and not observed:
+        return alpha_plan * difficulty
+    return illegal
 
 
 def _parse_bbox(text):
@@ -202,26 +213,9 @@ def _item_id(text, bbox):
     return re.sub(r"\s+", " ", text or "").strip().lower()
 
 
-def _best_plan_id(bbox, plan_items, min_iou=0.5):
-    if bbox is None:
-        return None
-    best_id, best = None, 0.0
-    for item in plan_items:
-        if item["bbox"] is None:
-            continue
-        iou = _box_iou(bbox, item["bbox"])
-        if iou > best:
-            best, best_id = iou, item["id"]
-    if best < min_iou:
-        return None
-    return best_id
-
-
 def _match_completed(body, plan_items):
+    """Align a PROGRESS [x] line to a plan item by exact id / text (no IoU)."""
     bbox = _parse_bbox(body)
-    aligned = _best_plan_id(bbox, plan_items)
-    if aligned:
-        return aligned
     ident = _item_id(body, bbox)
     for item in plan_items:
         if item["id"] == ident:
@@ -238,8 +232,8 @@ def parse_plan_events(text: str) -> list:
     """Turn an RL trajectory into ordered plan / tool / progress / answer events.
 
     Plan item ids are the checklist bbox when present, otherwise the item text.
-    A tool observation is aligned to the plan item whose bbox matches the crop
-    the environment actually returned.
+    Tool observations are aligned by the exact rounded bbox id logged in
+    TOOL_EXECUTION_* (same id scheme as plan items), not by IoU.
     """
     if not text:
         return []
@@ -273,14 +267,14 @@ def parse_plan_events(text: str) -> list:
             bbox = _parse_bbox(text[match.end():match.end() + 500])
             events.append({
                 "type": "tool_result",
-                "plan_id": _best_plan_id(bbox, plan_items),
+                "plan_id": _item_id("", bbox) if bbox is not None else None,
                 "success": True,
             })
         elif "FAILED" in kind:
             bbox = _parse_bbox(text[match.end():match.end() + 300])
             events.append({
                 "type": "tool_result",
-                "plan_id": _best_plan_id(bbox, plan_items),
+                "plan_id": _item_id("", bbox) if bbox is not None else None,
                 "success": False,
             })
         elif kind == "<ANSWER>":
@@ -353,11 +347,19 @@ def compute_score(solution_str: str, ground_truth: str, extra_info: Any = None, 
 
     try:
         plan_events = parse_plan_events(predict_str)
-        r_plan = float(plan_reward(plan_events, D, alpha=1.0, beta=manager.beta))
+        r_plan = float(
+            plan_reward(
+                plan_events,
+                D,
+                alpha_plan=manager.alpha_plan,
+                beta_plan=manager.beta_plan,
+                gamma_plan=manager.gamma_plan,
+            )
+        )
     except Exception as exc:
         logger.warning(f"plan reward parse failed ({exc}); assigning penalty")
         plan_events = []
-        r_plan = float(-manager.beta * D)
+        r_plan = float(-manager.gamma_plan)
 
     logger.debug(
         f"5. Process 过程分情况：难度(D): {D:.4f} | events={len(plan_events)} | 过程得分(r_plan): {r_plan:.4f}"
