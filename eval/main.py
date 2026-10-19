@@ -3,14 +3,13 @@ import os
 
 # 从配置中导入环境变量读取的默认值
 from config import WORK_DIR, API_BASE, API_KEY
-from ablation_sops import normalize_ablation, ABLATION_ORDER, ABLATION_META
 from infer import run_inference
 from evaluate import run_evaluation
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="GeoVista Multi-Benchmark Toolkit (supports prompt-only component ablation)"
+        description="GeoVista Multi-Benchmark Toolkit"
     )
 
     parser.add_argument('--data', nargs='+', type=str, required=True,
@@ -37,50 +36,26 @@ def parse_args():
                         help='Directory to save inference results and evaluation reports')
 
     parser.add_argument(
-        '--ablation', type=str, default=None,
-        help=(
-            "Prompt-only component ablation variant. "
-            f"Choices: {', '.join(ABLATION_ORDER)} (aliases A–D). "
-            "Omit / 'none' = dataset default SOP."
-        ),
-    )
-
-    parser.add_argument(
         '--max-tool-calls', type=int, default=None,
-        help='Hard cap on zoom_in calls per question (recommended 8 for ablation). '
-             'Omit = unlimited (legacy).',
+        help='Hard cap on zoom_in calls per question. Omit = unlimited.',
     )
 
     parser.add_argument(
         '--max-turns', type=int, default=30,
-        help='Max LLM turns per question (default 30). For ablation with tool budget 8, 20 is enough.',
+        help='Max LLM turns per question (default 30).',
     )
 
     return parser.parse_args()
 
 
-def _output_stem(model_name: str, dataset: str, ablation: str = None) -> str:
-    canon = normalize_ablation(ablation)
-    if canon:
-        return f"{model_name}_{dataset}_{canon}"
-    return f"{model_name}_{dataset}"
-
-
 def main():
     args = parse_args()
-    # Validate early
-    canon = normalize_ablation(args.ablation)
 
     for model_name in args.model:
         for dataset in args.data:
-            stem = _output_stem(model_name, dataset, args.ablation)
+            stem = f"{model_name}_{dataset}"
             print(f"\n{'#'*60}")
-            print(f"# Processing: [{dataset.upper()}] model=[{model_name}] "
-                  f"ablation=[{canon or 'default'}]")
-            if canon:
-                meta = ABLATION_META[canon]
-                print(f"#   {meta['label']} | multi_roi={meta['multi_roi']} "
-                      f"evidence={meta['evidence']} dedup={meta['dedup']}")
+            print(f"# Processing: [{dataset.upper()}] model=[{model_name}]")
             print(f"#   max_tool_calls={args.max_tool_calls} max_turns={args.max_turns}")
             print(f"#{'#'*59}")
 
@@ -95,7 +70,6 @@ def main():
                     api_key=args.api_key,
                     workers=args.api_nproc,
                     output_path=infer_output_file,
-                    ablation=args.ablation,
                     max_tool_calls=args.max_tool_calls,
                     max_turns=args.max_turns,
                 )

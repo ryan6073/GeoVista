@@ -13,7 +13,6 @@ from geovista.agent import (
     zoom_in_tool,
 )
 from config import DATASETS
-from ablation_sops import sop_for_dataset, normalize_ablation, ABLATION_META
 
 write_lock = threading.Lock()
 
@@ -24,7 +23,6 @@ def process_single_task(
     model_name: str,
     api_base: str,
     api_key: str,
-    ablation: str = None,
     max_tool_calls: int = None,
     max_turns: int = 30,
 ) -> dict:
@@ -49,16 +47,14 @@ def process_single_task(
 
     if not os.path.exists(test_image):
         data_row["model_output"] = "Error: Image file not found"
-        _attach_run_stats(data_row, agent, ablation)
+        _attach_run_stats(data_row, agent)
         return data_row
 
     if question_has_given_pixel_roi(question_text):
         question_text = question_text + "\n\n" + GIVEN_ROI_EVAL_HINT
     prompt = f"Question: {question_text}\n\n[System Observation]\nCurrent View: Global View\n"
 
-    # Prompt-only ablation: swap SOP; keep same tool / budget / model.
-    ablation_sop = sop_for_dataset(ablation, dataset_name, max_tool_calls=max_tool_calls or 8)
-    system_prompt = ablation_sop if ablation_sop is not None else config["sop"]
+    system_prompt = config["sop"]
 
     try:
         final_ans = agent.run(
@@ -71,11 +67,11 @@ def process_single_task(
     except Exception as e:
         data_row["model_output"] = f"Error: {str(e)}"
 
-    _attach_run_stats(data_row, agent, ablation)
+    _attach_run_stats(data_row, agent)
     return data_row
 
 
-def _attach_run_stats(data_row: dict, agent, ablation: str = None) -> None:
+def _attach_run_stats(data_row: dict, agent) -> None:
     """Write visual/input_text/output_text tokens and turn/tool counts onto the result row."""
     summary = agent.token_summary()
     data_row["visual_tokens"] = summary["visual_tokens"]
@@ -86,10 +82,6 @@ def _attach_run_stats(data_row: dict, agent, ablation: str = None) -> None:
     data_row["n_turns"] = summary["n_turns"]
     data_row["n_tool_calls"] = summary.get("n_tool_calls", 0)
     data_row["budget_exhausted"] = summary.get("budget_exhausted", False)
-    canon = normalize_ablation(ablation)
-    data_row["ablation"] = canon or "default"
-    if canon:
-        data_row["ablation_label"] = ABLATION_META[canon]["label"]
 
 
 def run_inference(
@@ -99,7 +91,6 @@ def run_inference(
     api_key: str,
     workers: int,
     output_path: str,
-    ablation: str = None,
     max_tool_calls: int = None,
     max_turns: int = 30,
 ):
@@ -115,14 +106,12 @@ def run_inference(
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
     open(output_path, 'w', encoding='utf-8').close()
 
-    canon = normalize_ablation(ablation)
-    abl_tag = canon or "default"
     print(
-        f"🚀 [Infer] Starting | Model: {model_name} | Ablation: {abl_tag} | "
+        f"🚀 [Infer] Starting | Model: {model_name} | "
         f"max_tool_calls={max_tool_calls} | Threads: {workers} | Total: {len(all_data)}"
     )
 
-    with tqdm(total=len(all_data), desc=f"Infer {dataset_name.upper()}/{abl_tag}", unit="it") as pbar:
+    with tqdm(total=len(all_data), desc=f"Infer {dataset_name.upper()}", unit="it") as pbar:
         with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
             future_to_data = {
                 executor.submit(
@@ -132,7 +121,6 @@ def run_inference(
                     model_name,
                     api_base,
                     api_key,
-                    ablation,
                     max_tool_calls,
                     max_turns,
                 ): row

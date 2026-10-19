@@ -4,3 +4,14 @@ img/
 data/*.parquet
 checkpoints/
 logs/
+
+# Keep ablation tooling local; do not publish to GitHub
+eval/ablation_sops.py
+eval/run_ablation_*.py
+eval/run_ablation_*.sh
+eval/chain_ablation_*.sh
+eval/chain_after_ablation_*.sh
+results/
+**/__pycache__/
+reward_debug.log
+tools/
