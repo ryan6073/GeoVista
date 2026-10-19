@@ -30,7 +30,7 @@ from geovista.agent import (  # noqa: E402
     question_has_given_pixel_roi,
     zoom_in_tool,
 )
-from run_ablation_recover import (  # noqa: E402
+from recover_agent import (  # noqa: E402
     MAX_TURN_ERROR,
     RecoverAgent,
     attach_stats,

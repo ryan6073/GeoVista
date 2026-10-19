@@ -26,7 +26,7 @@ sys.path.append(os.path.dirname(__file__))
 from config import DATASETS  # noqa: E402
 from evaluate import eval_xlrs  # noqa: E402
 from geovista.agent import zoom_in_tool  # noqa: E402
-from run_ablation_recover import (  # noqa: E402
+from recover_agent import (  # noqa: E402
     MAX_TURN_ERROR,
     RecoverAgent,
     attach_stats,
